@@ -323,8 +323,8 @@ function MarketTab() {
         </div>
       </div>
 
-      {/* ── Bottom 3-column layout ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {/* ── Bottom 2-column layout ── */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
         {/* ── Sector Performance (spans 1 col) ── */}
         <section aria-labelledby="sector-heading" className="glass-card p-5">
@@ -494,68 +494,72 @@ function MarketTab() {
           </section>
         </div>
 
-        {/* ── Today's Top News (spans 1 col) ── */}
-        <section aria-labelledby="news-heading" className="glass-card p-5">
-          <div className="flex items-center gap-2 mb-5">
-            <Newspaper size={15} style={{ color: '#eab308' }} aria-hidden="true" />
-            <h3 id="news-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-              Today's Top News
-            </h3>
-          </div>
-          <div className="space-y-1">
-            {NEWS.map((item, i) => {
-              const s = SENTIMENT_STYLES[item.sentiment]
-              return (
-                <article
-                  key={i}
-                  aria-label={`${item.source}: ${item.headline}`}
-                  className="group p-3.5 rounded-xl transition-colors duration-150"
-                  style={{ border: '1px solid transparent' }}
-                  onMouseEnter={e => {
-                    ;(e.currentTarget as HTMLElement).style.background = 'var(--bg-card-hover)'
-                    ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'
-                  }}
-                  onMouseLeave={e => {
-                    ;(e.currentTarget as HTMLElement).style.background = 'transparent'
-                    ;(e.currentTarget as HTMLElement).style.borderColor = 'transparent'
-                  }}
-                >
-                  {/* Meta row */}
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span
-                      className="text-xs font-semibold px-2 py-0.5 rounded"
-                      style={{ background: 'rgba(234,179,8,0.1)', color: '#eab308', fontFamily: 'var(--font-mono)' }}
-                    >
-                      {item.source}
-                    </span>
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full font-medium"
-                      style={{ background: s.bg, color: s.color }}
-                      aria-label={`Sentiment: ${item.sentiment}`}
-                    >
-                      {item.sentiment}
-                    </span>
-                    <span
-                      className="text-xs px-2 py-0.5 rounded"
-                      style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
-                    >
-                      {item.category}
-                    </span>
-                    <span className="ml-auto flex items-center gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
-                      <Clock size={10} aria-hidden="true" />
-                      <time>{item.time}</time>
-                    </span>
-                  </div>
-                  {/* Headline */}
-                  <p className="text-sm leading-snug" style={{ color: 'var(--text-secondary)' }}>
-                    {item.headline}
-                  </p>
-                </article>
-              )
-            })}
-          </div>
-        </section>
       </div>
+
+      {/* ── Today's Top News — full width, 2-col grid ── */}
+      <section aria-labelledby="news-heading" className="glass-card p-5">
+        <div className="flex items-center gap-2 mb-5">
+          <Newspaper size={15} style={{ color: '#eab308' }} aria-hidden="true" />
+          <h3 id="news-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+            Today's Top News
+          </h3>
+          <span className="ml-auto text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            {NEWS.length} stories
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {NEWS.map((item, i) => {
+            const s = SENTIMENT_STYLES[item.sentiment]
+            return (
+              <article
+                key={i}
+                aria-label={`${item.source}: ${item.headline}`}
+                className="group p-3.5 rounded-xl transition-colors duration-150"
+                style={{ border: '1px solid transparent' }}
+                onMouseEnter={e => {
+                  ;(e.currentTarget as HTMLElement).style.background = 'var(--bg-card-hover)'
+                  ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'
+                }}
+                onMouseLeave={e => {
+                  ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+                  ;(e.currentTarget as HTMLElement).style.borderColor = 'transparent'
+                }}
+              >
+                {/* Meta row */}
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span
+                    className="text-xs font-semibold px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(234,179,8,0.1)', color: '#eab308', fontFamily: 'var(--font-mono)' }}
+                  >
+                    {item.source}
+                  </span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style={{ background: s.bg, color: s.color }}
+                    aria-label={`Sentiment: ${item.sentiment}`}
+                  >
+                    {item.sentiment}
+                  </span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+                  >
+                    {item.category}
+                  </span>
+                  <span className="ml-auto flex items-center gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <Clock size={10} aria-hidden="true" />
+                    <time>{item.time}</time>
+                  </span>
+                </div>
+                {/* Headline */}
+                <p className="text-sm leading-snug" style={{ color: 'var(--text-secondary)' }}>
+                  {item.headline}
+                </p>
+              </article>
+            )
+          })}
+        </div>
+      </section>
     </div>
   )
 }

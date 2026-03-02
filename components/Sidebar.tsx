@@ -1,8 +1,8 @@
 'use client'
 
-import { LayoutDashboard, TrendingUp, List, BarChart2, Settings, ChevronLeft, Wallet, Shield, Globe, Heart } from 'lucide-react'
+import Link from 'next/link'
+import { LayoutDashboard, TrendingUp, List, BarChart2, Settings, ChevronLeft, Shield, Globe, Heart } from 'lucide-react'
 import { TabType } from './DashboardClient'
-import { formatCurrency, formatPercent, getPnLClass } from '@/lib/utils'
 
 interface SidebarProps {
   activeTab: TabType
@@ -17,8 +17,10 @@ const navItems = [
   { id: 'market'       as TabType, icon: Globe,           label: 'Market'       },
   { id: 'holdings'     as TabType, icon: TrendingUp,      label: 'Holdings'     },
   { id: 'transactions' as TabType, icon: List,            label: 'Transactions' },
-  { id: 'analytics'    as TabType, icon: BarChart2,       label: 'Analytics'    },
   { id: 'wishlist'     as TabType, icon: Heart,           label: 'Wishlist'     },
+  { id: 'security'     as TabType, icon: Shield,          label: 'Security'     },
+  { id: 'analytics'    as TabType, icon: BarChart2,       label: 'Analytics'    },
+ 
 ]
 
 export default function Sidebar({ activeTab, setActiveTab, open, setOpen, portfolio }: SidebarProps) {
@@ -40,7 +42,11 @@ export default function Sidebar({ activeTab, setActiveTab, open, setOpen, portfo
       }}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 p-5 pb-6">
+      <Link
+        href="/"
+        aria-label="Armor — go to home page"
+        className="flex items-center gap-3 p-5 pb-6 transition-opacity hover:opacity-80"
+      >
         <div
           className="relative flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -54,26 +60,8 @@ export default function Sidebar({ activeTab, setActiveTab, open, setOpen, portfo
             <div className="text-xs" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>INVESTTRACK</div>
           </div>
         )}
-      </div>
+      </Link>
 
-      {/* Portfolio summary card */}
-      {open && portfolio && (
-        <div className="mx-3 mb-4 p-3 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-2 mb-2">
-            <Wallet size={12} style={{ color: 'var(--text-muted)' }} />
-            <span className="text-xs" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>TOTAL VALUE</span>
-          </div>
-          <div className="font-mono text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
-            {formatCurrency(portfolio.totalValue, true)}
-          </div>
-          <div className={`flex items-center gap-1 mt-1 text-xs ${getPnLClass(portfolio.dayPnL)}`}>
-            <span>{portfolio.dayPnL >= 0 ? '▲' : '▼'}</span>
-            <span>{formatCurrency(Math.abs(portfolio.dayPnL), true)}</span>
-            <span>({formatPercent(portfolio.dayPnLPercent)})</span>
-            <span style={{ color: 'var(--text-muted)' }} className="ml-1">today</span>
-          </div>
-        </div>
-      )}
 
       {/* Nav */}
       <nav className="flex-1 px-2" aria-label="Dashboard sections" role="navigation">

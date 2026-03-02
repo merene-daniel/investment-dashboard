@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   TrendingUp, BarChart2, Shield, Activity,
   LayoutDashboard, Clock, Globe, ArrowRight,
   ChevronRight, Zap, Menu, X,
   Lock, RefreshCw, Target, Check, Star,
+  UserPlus, LogIn, Mail, Smartphone,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
@@ -81,7 +83,7 @@ const TESTIMONIALS = [
     company: 'Meridian Capital',
     initials: 'SC',
     avatarColor: '#eab308',
-    quote: 'Aurum has transformed how I manage client portfolios. The analytics depth rivals tools that cost 10× more. The P&L tracking is flawless and the UI is genuinely beautiful.',
+    quote: 'Armor has transformed how I manage client portfolios. The analytics depth rivals tools that cost 10× more. The P&L tracking is flawless and the UI is genuinely beautiful.',
     stars: 5,
   },
   {
@@ -90,7 +92,7 @@ const TESTIMONIALS = [
     company: 'Independent',
     initials: 'MW',
     avatarColor: '#10b981',
-    quote: "I've tried every portfolio tracker on the market. Nothing comes close to Aurum's clean interface and real-time data. It's become my non-negotiable daily driver.",
+    quote: "I've tried every portfolio tracker on the market. Nothing comes close to Armor's clean interface and real-time data. It's become my non-negotiable daily driver.",
     stars: 5,
   },
   {
@@ -164,14 +166,67 @@ const PLANS = [
 ]
 
 const NAV_LINKS = [
-  { label: 'Features', href: '#features' },
-  { label: 'Pricing',  href: '#pricing'  },
-  { label: 'Security', href: '#security' },
+  { label: 'Features', href: '#features'  },
+  { label: 'Pricing',  href: '#pricing'   },
+  { label: 'Security', href: '/security'  },
+  { label: 'About',    href: '/about'     },
 ]
 
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina',
+  'Armenia','Australia','Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados',
+  'Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana',
+  'Brazil','Brunei','Bulgaria','Burkina Faso','Burundi','Cabo Verde','Cambodia','Cameroon',
+  'Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros',
+  'Congo (Democratic Republic)','Congo (Republic)','Costa Rica','Croatia','Cuba','Cyprus',
+  'Czech Republic','Denmark','Djibouti','Dominica','Dominican Republic','Ecuador','Egypt',
+  'El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia','Fiji','Finland',
+  'France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala',
+  'Guinea','Guinea-Bissau','Guyana','Haiti','Honduras','Hungary','Iceland','India','Indonesia',
+  'Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya',
+  'Kiribati','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia',
+  'Libya','Liechtenstein','Lithuania','Luxembourg','Madagascar','Malawi','Malaysia','Maldives',
+  'Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova',
+  'Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar','Namibia','Nauru','Nepal',
+  'Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia',
+  'Norway','Oman','Pakistan','Palau','Palestine','Panama','Papua New Guinea','Paraguay','Peru',
+  'Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis',
+  'Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe',
+  'Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia',
+  'Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka',
+  'Sudan','Suriname','Sweden','Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand',
+  'Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay',
+  'Uzbekistan','Vanuatu','Vatican City','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe',
+]
+
+const EMPTY_FORM = { email: '', username: '', password: '', confirmPassword: '', country: '' }
+type LoginStep = 'credentials' | 'mfa-method' | 'mfa-code' | 'success'
+
 export default function LandingPage() {
+  const router = useRouter()
+
   const [scrolled, setScrolled] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+  // Register modal
+  const [registerOpen, setRegisterOpen] = useState(false)
+  const [registerForm, setRegisterForm] = useState(EMPTY_FORM)
+  const [registerError, setRegisterError] = useState('')
+  const [registerSuccess, setRegisterSuccess] = useState(false)
+  const [registerLoading, setRegisterLoading] = useState(false)
+
+  // Login modal
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [loginStep, setLoginStep] = useState<LoginStep>('credentials')
+  const [loginForm, setLoginForm] = useState({ identifier: '', password: '' })
+  const [loginError, setLoginError] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [mfaMethod, setMfaMethod] = useState<'email' | 'phone'>('email')
+  const [mfaTarget, setMfaTarget] = useState('')
+  const [mfaCode, setMfaCode] = useState('')
+  const [mfaDemoCode, setMfaDemoCode] = useState('')
+  const [mfaUserId, setMfaUserId] = useState('')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -179,14 +234,143 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile nav on Escape
+  // Close mobile nav / modals on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileNavOpen(false)
+      if (e.key === 'Escape') {
+        setMobileNavOpen(false)
+        setRegisterOpen(false)
+        setLoginOpen(false)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
+
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault()
+    setRegisterError('')
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setRegisterError('Passwords do not match.')
+      return
+    }
+    setRegisterLoading(true)
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(registerForm),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setRegisterError(data.error ?? 'Something went wrong.')
+      } else {
+        setRegisterSuccess(true)
+        setRegisterForm(EMPTY_FORM)
+      }
+    } catch {
+      setRegisterError('Network error. Please try again.')
+    } finally {
+      setRegisterLoading(false)
+    }
+  }
+
+  function openRegister() {
+    setRegisterSuccess(false)
+    setRegisterError('')
+    setRegisterForm(EMPTY_FORM)
+    setRegisterOpen(true)
+  }
+
+  function openLogin() {
+    setLoginStep('credentials')
+    setLoginForm({ identifier: '', password: '' })
+    setLoginError('')
+    setMfaMethod('email')
+    setMfaTarget('')
+    setMfaCode('')
+    setMfaDemoCode('')
+    setMfaUserId('')
+    setLoginOpen(true)
+  }
+
+  async function handleLoginCredentials(e: React.FormEvent) {
+    e.preventDefault()
+    setLoginError('')
+    // Demo bypass — empty credentials go straight to dashboard
+    if (!loginForm.identifier.trim() && !loginForm.password.trim()) {
+      router.push('/dashboard')
+      return
+    }
+    setLoginLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setLoginError(data.error ?? 'Login failed.')
+      } else {
+        setMfaUserId(data.userId)
+        setMfaTarget(data.email) // pre-fill with account email
+        setLoginStep('mfa-method')
+      }
+    } catch {
+      setLoginError('Network error. Please try again.')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
+
+  async function handleMfaSend(e: React.FormEvent) {
+    e.preventDefault()
+    setLoginError('')
+    setLoginLoading(true)
+    try {
+      const res = await fetch('/api/auth/mfa/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: mfaUserId, type: mfaMethod, target: mfaTarget }),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setLoginError(data.error ?? 'Failed to send code.')
+      } else {
+        setMfaDemoCode(data.demoCode ?? '')
+        setMfaCode('')
+        setLoginStep('mfa-code')
+      }
+    } catch {
+      setLoginError('Network error. Please try again.')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
+
+  async function handleMfaVerify(e: React.FormEvent) {
+    e.preventDefault()
+    setLoginError('')
+    setLoginLoading(true)
+    try {
+      const res = await fetch('/api/auth/mfa/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: mfaTarget, code: mfaCode }),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setLoginError(data.error ?? 'Verification failed.')
+      } else {
+        setLoginStep('success')
+      }
+    } catch {
+      setLoginError('Network error. Please try again.')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
 
   return (
     <main id="main-content" className="min-h-screen overflow-x-hidden">
@@ -204,7 +388,7 @@ export default function LandingPage() {
         >
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3" aria-label="Aurum home">
+            <Link href="/" className="flex items-center gap-3" aria-label="Armor home">
               <div className="relative w-9 h-9" aria-hidden="true">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-base text-black"
@@ -215,10 +399,10 @@ export default function LandingPage() {
                 <div className="absolute inset-0 rounded-xl pulse-ring" style={{ color: '#eab308', opacity: 0.35 }} />
               </div>
               <span
-                className="text-xl font-bold tracking-wide"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+                className="text-xl font-bold tracking-wide gold-text"
+                style={{ fontFamily: 'var(--font-display)' }}
               >
-                Aurum
+                Armor
               </span>
             </Link>
 
@@ -257,9 +441,28 @@ export default function LandingPage() {
                 className="hidden md:flex btn-primary items-center gap-2 text-sm"
                 aria-label="Open the investment dashboard"
               >
-                Open Dashboard
+                Dashboard
                 <ArrowRight size={14} aria-hidden="true" />
               </Link>
+              <button
+                type="button"
+                onClick={openLogin}
+                className="hidden md:flex btn-secondary items-center gap-2 text-sm"
+                aria-label="Log in to your Armor account"
+              >
+                <LogIn size={14} aria-hidden="true" />
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={openRegister}
+                className="hidden md:flex btn-secondary items-center gap-2 text-sm"
+                aria-label="Create a new Armor account"
+              >
+                <UserPlus size={14} aria-hidden="true" />
+                Open Account
+              </button>
+              
             </div>
           </div>
 
@@ -292,14 +495,32 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href="/dashboard"
-                className="btn-primary flex items-center justify-center gap-2 text-sm w-full"
-                onClick={() => setMobileNavOpen(false)}
-              >
-                Open Dashboard
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  className="btn-secondary flex items-center justify-center gap-2 text-sm w-full"
+                  onClick={() => { setMobileNavOpen(false); openLogin() }}
+                >
+                  <LogIn size={14} aria-hidden="true" />
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary flex items-center justify-center gap-2 text-sm w-full"
+                  onClick={() => { setMobileNavOpen(false); openRegister() }}
+                >
+                  <UserPlus size={14} aria-hidden="true" />
+                  Open Account
+                </button>
+                <Link
+                  href="/dashboard"
+                  className="btn-primary flex items-center justify-center gap-2 text-sm w-full"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  Dashboard
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
             </div>
           )}
         </nav>
@@ -358,11 +579,11 @@ export default function LandingPage() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 fade-in-up stagger-3">
             <Link href="/dashboard" className="btn-primary flex items-center gap-2 px-8 py-3">
-              Open Dashboard
+              Dashboard
               <ArrowRight size={15} />
             </Link>
-            <a href="#features" className="btn-secondary flex items-center gap-2 px-8 py-3">
-              Explore Features
+            <a href="#pricing" className="btn-secondary flex items-center gap-2 px-8 py-3">
+              View Pricing
               <ChevronRight size={15} />
             </a>
           </div>
@@ -380,6 +601,123 @@ export default function LandingPage() {
                 <div className="text-xs tracking-wide" style={{ color: 'var(--text-muted)' }}>
                   {stat.label}
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features Section ── */}
+      <section
+        id="features"
+        aria-labelledby="features-heading"
+        className="py-24 px-6"
+        style={{ borderTop: '1px solid rgba(234, 179, 8, 0.06)' }}
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-4"
+              style={{ color: '#eab308', fontFamily: 'var(--font-mono)' }}
+            >
+              Platform Features
+            </p>
+            <h2
+              id="features-heading"
+              className="text-4xl md:text-5xl font-bold mb-4"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+            >
+              Everything you need to
+              <br />
+              <span className="gold-text">manage wealth</span>
+            </h2>
+            <p className="text-base max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+              A complete suite of investment management tools designed for
+              sophisticated investors and professional portfolio managers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {FEATURES.map((feature) => {
+              const Icon = feature.icon
+              return (
+                <div key={feature.title} className="glass-card p-6 group transition-all duration-300">
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                      background: `${feature.color}18`,
+                      border: `1px solid ${feature.color}30`,
+                    }}
+                  >
+                    <Icon size={20} style={{ color: feature.color }} />
+                  </div>
+                  <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    {feature.description}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section
+        className="py-24 px-6"
+        style={{ borderTop: '1px solid rgba(234, 179, 8, 0.06)' }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-4"
+              style={{ color: '#eab308', fontFamily: 'var(--font-mono)' }}
+            >
+              How It Works
+            </p>
+            <h2
+              className="text-4xl md:text-5xl font-bold"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+            >
+              Up and running in
+              <br />
+              <span className="gold-text">minutes</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {HOW_IT_WORKS.map((step, i) => (
+              <div key={step.step} className="text-center relative">
+                {i < HOW_IT_WORKS.length - 1 && (
+                  <div
+                    className="hidden md:block absolute top-8 left-[calc(50%+2.5rem)] right-[-calc(50%-2.5rem)] h-px"
+                    style={{ background: 'linear-gradient(to right, rgba(234,179,8,0.3), rgba(234,179,8,0.05))' }}
+                  />
+                )}
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 relative"
+                  style={{
+                    background: 'rgba(234, 179, 8, 0.08)',
+                    border: '1px solid rgba(234, 179, 8, 0.2)',
+                    fontFamily: 'var(--font-mono)',
+                    color: '#eab308',
+                    fontSize: '20px',
+                    fontWeight: '700',
+                  }}
+                >
+                  {step.step}
+                </div>
+                <h3
+                  className="text-lg font-semibold mb-3"
+                  style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+                >
+                  {step.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
@@ -596,123 +934,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features Section ── */}
-      <section
-        id="features"
-        aria-labelledby="features-heading"
-        className="py-24 px-6"
-        style={{ borderTop: '1px solid rgba(234, 179, 8, 0.06)' }}
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <p
-              className="text-xs font-medium tracking-widest uppercase mb-4"
-              style={{ color: '#eab308', fontFamily: 'var(--font-mono)' }}
-            >
-              Platform Features
-            </p>
-            <h2
-              id="features-heading"
-              className="text-4xl md:text-5xl font-bold mb-4"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-            >
-              Everything you need to
-              <br />
-              <span className="gold-text">manage wealth</span>
-            </h2>
-            <p className="text-base max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-              A complete suite of investment management tools designed for
-              sophisticated investors and professional portfolio managers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map((feature) => {
-              const Icon = feature.icon
-              return (
-                <div key={feature.title} className="glass-card p-6 group transition-all duration-300">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: `${feature.color}18`,
-                      border: `1px solid ${feature.color}30`,
-                    }}
-                  >
-                    <Icon size={20} style={{ color: feature.color }} />
-                  </div>
-                  <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                    {feature.description}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How It Works ── */}
-      <section
-        className="py-24 px-6"
-        style={{ borderTop: '1px solid rgba(234, 179, 8, 0.06)' }}
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p
-              className="text-xs font-medium tracking-widest uppercase mb-4"
-              style={{ color: '#eab308', fontFamily: 'var(--font-mono)' }}
-            >
-              How It Works
-            </p>
-            <h2
-              className="text-4xl md:text-5xl font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-            >
-              Up and running in
-              <br />
-              <span className="gold-text">minutes</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {HOW_IT_WORKS.map((step, i) => (
-              <div key={step.step} className="text-center relative">
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div
-                    className="hidden md:block absolute top-8 left-[calc(50%+2.5rem)] right-[-calc(50%-2.5rem)] h-px"
-                    style={{ background: 'linear-gradient(to right, rgba(234,179,8,0.3), rgba(234,179,8,0.05))' }}
-                  />
-                )}
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 relative"
-                  style={{
-                    background: 'rgba(234, 179, 8, 0.08)',
-                    border: '1px solid rgba(234, 179, 8, 0.2)',
-                    fontFamily: 'var(--font-mono)',
-                    color: '#eab308',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                  }}
-                >
-                  {step.step}
-                </div>
-                <h3
-                  className="text-lg font-semibold mb-3"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-                >
-                  {step.title}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Security Strip ── */}
       <section
         id="security"
@@ -793,7 +1014,7 @@ export default function LandingPage() {
                 className="text-base mb-8 max-w-lg mx-auto leading-relaxed"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Join sophisticated investors who trust Aurum for institutional-grade
+                Join sophisticated investors who trust Armor for institutional-grade
                 portfolio management and performance analytics.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -828,39 +1049,535 @@ export default function LandingPage() {
                 A
               </div>
               <span
-                className="text-lg font-bold"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+                className="text-lg font-bold gold-text"
+                style={{ fontFamily: 'var(--font-display)' }}
               >
-                Aurum
+                Armor
               </span>
             </div>
 
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              © {new Date().getFullYear()} Aurum Investment Management. All rights reserved.
+              © {new Date().getFullYear()} Armor Investment Management. All rights reserved.
             </p>
 
-            <nav aria-label="Footer navigation">
-              <ul className="flex items-center gap-6 list-none" role="list">
-                {[
-                  { label: 'Features',  href: '#features'  },
-                  { label: 'Pricing',   href: '#pricing'   },
-                  { label: 'Dashboard', href: '/dashboard' },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-xs transition-colors duration-200 hover:text-yellow-400"
-                      style={{ color: 'var(--text-muted)' }}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
           </div>
         </div>
       </footer>
+
+      {/* ── Login Modal ── */}
+      {loginOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setLoginOpen(false) }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="login-title"
+        >
+          <div
+            className="w-full max-w-md rounded-2xl p-7 relative"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+          >
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() => setLoginOpen(false)}
+              aria-label="Close login form"
+              className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)', background: 'transparent' }}
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+
+            {/* ── Step: credentials ── */}
+            {loginStep === 'credentials' && (
+              <>
+                <div className="mb-6">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
+                  >
+                    <LogIn size={18} className="text-black" aria-hidden="true" />
+                  </div>
+                  <h2 id="login-title" className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                    Welcome back
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    Sign in to your Armor account.
+                  </p>
+                </div>
+
+                {/* Security trust strip */}
+                <div className="flex items-center gap-4 mb-5 px-3 py-2 rounded-xl" style={{ background: 'rgba(234,179,8,0.05)', border: '1px solid rgba(234,179,8,0.1)' }}>
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <Lock size={11} style={{ color: '#eab308' }} aria-hidden="true" />
+                    256-bit SSL
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <Shield size={11} style={{ color: '#10b981' }} aria-hidden="true" />
+                    2FA Protected
+                  </div>
+                </div>
+
+                <form onSubmit={handleLoginCredentials} noValidate className="flex flex-col gap-4">
+                  <div>
+                    <label htmlFor="login-id" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                      Email or Username
+                    </label>
+                    <input
+                      id="login-id"
+                      type="text"
+                      autoComplete="username"
+                      placeholder="you@example.com or username"
+                      value={loginForm.identifier}
+                      onChange={e => setLoginForm(f => ({ ...f, identifier: e.target.value }))}
+                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="login-pw" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                      Password
+                    </label>
+                    <input
+                      id="login-pw"
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="Your password"
+                      value={loginForm.password}
+                      onChange={e => setLoginForm(f => ({ ...f, password: e.target.value }))}
+                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                    />
+                  </div>
+
+                  {loginError && (
+                    <p className="text-xs rounded-lg px-3 py-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
+                      {loginError}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loginLoading}
+                    className="btn-primary w-full flex items-center justify-center gap-2 mt-1"
+                    style={{ opacity: loginLoading ? 0.7 : 1 }}
+                  >
+                    {loginLoading
+                      ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
+                      : <LogIn size={14} aria-hidden="true" />}
+                    {loginLoading ? 'Verifying…' : 'Login'}
+                  </button>
+
+                  <p className="text-center text-xs" style={{ color: 'var(--text-muted)' }}>
+                    Leave both fields empty to enter as guest
+                  </p>
+                </form>
+              </>
+            )}
+
+            {/* ── Step: mfa-method ── */}
+            {loginStep === 'mfa-method' && (
+              <>
+                <div className="mb-6">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)' }}
+                  >
+                    <Shield size={18} style={{ color: '#10b981' }} aria-hidden="true" />
+                  </div>
+                  <h2 id="login-title" className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                    Two-Factor Authentication
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    Choose how to receive your verification code.
+                  </p>
+                </div>
+
+                <form onSubmit={handleMfaSend} noValidate className="flex flex-col gap-4">
+                  {/* Method selector */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {(['email', 'phone'] as const).map(m => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => { setMfaMethod(m); setMfaTarget(m === 'email' ? mfaTarget : '') }}
+                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all"
+                        style={{
+                          background: mfaMethod === m ? 'rgba(234,179,8,0.1)' : 'var(--bg-secondary)',
+                          border: mfaMethod === m ? '1px solid rgba(234,179,8,0.35)' : '1px solid var(--border)',
+                          color: mfaMethod === m ? '#eab308' : 'var(--text-secondary)',
+                        }}
+                      >
+                        {m === 'email'
+                          ? <Mail size={20} aria-hidden="true" />
+                          : <Smartphone size={20} aria-hidden="true" />}
+                        <span className="text-xs font-medium capitalize">{m}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Target input */}
+                  <div>
+                    <label htmlFor="mfa-target" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                      {mfaMethod === 'email' ? 'Email address' : 'Phone number'}
+                    </label>
+                    <input
+                      id="mfa-target"
+                      type={mfaMethod === 'email' ? 'email' : 'tel'}
+                      autoComplete={mfaMethod === 'email' ? 'email' : 'tel'}
+                      placeholder={mfaMethod === 'email' ? 'you@example.com' : '+1 555 000 1234'}
+                      value={mfaTarget}
+                      onChange={e => setMfaTarget(e.target.value)}
+                      required
+                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                    />
+                  </div>
+
+                  {loginError && (
+                    <p className="text-xs rounded-lg px-3 py-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
+                      {loginError}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loginLoading}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                    style={{ opacity: loginLoading ? 0.7 : 1 }}
+                  >
+                    {loginLoading
+                      ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
+                      : <Shield size={14} aria-hidden="true" />}
+                    {loginLoading ? 'Sending code…' : 'Send Verification Code'}
+                  </button>
+
+                  <button type="button" onClick={() => { setLoginStep('credentials'); setLoginError('') }} className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+                    ← Back
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* ── Step: mfa-code ── */}
+            {loginStep === 'mfa-code' && (
+              <>
+                <div className="mb-6">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.25)' }}
+                  >
+                    <Shield size={18} style={{ color: '#eab308' }} aria-hidden="true" />
+                  </div>
+                  <h2 id="login-title" className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                    Enter your code
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    A 6-digit code was sent to <strong style={{ color: 'var(--text-secondary)' }}>{mfaTarget}</strong>.
+                  </p>
+                </div>
+
+                {/* Demo mode banner */}
+                {mfaDemoCode && (
+                  <div className="mb-4 px-3 py-2.5 rounded-xl flex items-start gap-2" style={{ background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)' }}>
+                    <span style={{ color: '#eab308', fontSize: 13 }}>⚠</span>
+                    <div>
+                      <p className="text-xs font-semibold" style={{ color: '#eab308' }}>Demo mode</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                        Your code is <strong style={{ color: 'var(--text-secondary)', letterSpacing: '0.15em' }}>{mfaDemoCode}</strong>
+                        <br />Remove <code style={{ fontSize: 11 }}>demoCode</code> from the API before going to production.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleMfaVerify} noValidate className="flex flex-col gap-4">
+                  <div>
+                    <label htmlFor="mfa-code-input" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                      Verification Code
+                    </label>
+                    <input
+                      id="mfa-code-input"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="\d{6}"
+                      maxLength={6}
+                      placeholder="000000"
+                      value={mfaCode}
+                      onChange={e => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      required
+                      className="w-full rounded-xl px-4 py-3 text-xl font-mono text-center outline-none tracking-widest transition-colors"
+                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                    />
+                  </div>
+
+                  {loginError && (
+                    <p className="text-xs rounded-lg px-3 py-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
+                      {loginError}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loginLoading || mfaCode.length !== 6}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                    style={{ opacity: (loginLoading || mfaCode.length !== 6) ? 0.6 : 1 }}
+                  >
+                    {loginLoading
+                      ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
+                      : <Check size={14} aria-hidden="true" />}
+                    {loginLoading ? 'Verifying…' : 'Verify Code'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setLoginStep('mfa-method'); setLoginError(''); setMfaDemoCode('') }}
+                    className="text-xs text-center"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    ← Resend or change method
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* ── Step: success ── */}
+            {loginStep === 'success' && (
+              <div className="text-center py-4">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+                  style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)' }}
+                >
+                  <Check size={28} style={{ color: '#10b981' }} aria-hidden="true" />
+                </div>
+                <h2 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                  Authenticated!
+                </h2>
+                <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
+                  Identity verified. Opening your dashboard…
+                </p>
+                <button
+                  type="button"
+                  onClick={() => router.push('/dashboard')}
+                  className="btn-primary w-full flex items-center justify-center gap-2"
+                >
+                  Open Dashboard
+                  <ArrowRight size={14} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Registration Modal ── */}
+      {registerOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setRegisterOpen(false) }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="register-title"
+        >
+          <div
+            className="w-full max-w-md rounded-2xl p-7 relative"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+          >
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() => setRegisterOpen(false)}
+              aria-label="Close registration form"
+              className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)', background: 'transparent' }}
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
+              >
+                <UserPlus size={18} className="text-black" aria-hidden="true" />
+              </div>
+              <h2 id="register-title" className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                Open Account
+              </h2>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                Create your Armor investment account.
+              </p>
+            </div>
+
+            {registerSuccess ? (
+              <div className="text-center py-6">
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                >
+                  <Check size={24} style={{ color: '#10b981' }} aria-hidden="true" />
+                </div>
+                <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Account created!</p>
+                <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
+                  Welcome to Armor. You can now open the dashboard.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setRegisterOpen(false)}
+                    className="flex-1 btn-secondary text-sm py-2.5"
+                  >
+                    Close
+                  </button>
+                  <Link href="/dashboard" className="flex-1 btn-primary flex items-center justify-center gap-2 text-sm py-2.5">
+                    Open Dashboard <ArrowRight size={13} aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleRegister} noValidate className="flex flex-col gap-4">
+                {/* Email */}
+                <div>
+                  <label htmlFor="reg-email" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    Email Address
+                  </label>
+                  <input
+                    id="reg-email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder="you@example.com"
+                    value={registerForm.email}
+                    onChange={e => setRegisterForm(f => ({ ...f, email: e.target.value }))}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)',
+                    }}
+                  />
+                </div>
+
+                {/* Username */}
+                <div>
+                  <label htmlFor="reg-username" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    Username
+                  </label>
+                  <input
+                    id="reg-username"
+                    type="text"
+                    autoComplete="username"
+                    required
+                    placeholder="e.g. john_doe"
+                    value={registerForm.username}
+                    onChange={e => setRegisterForm(f => ({ ...f, username: e.target.value }))}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)',
+                    }}
+                  />
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label htmlFor="reg-password" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    Password
+                  </label>
+                  <input
+                    id="reg-password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    placeholder="Minimum 8 characters"
+                    value={registerForm.password}
+                    onChange={e => setRegisterForm(f => ({ ...f, password: e.target.value }))}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)',
+                    }}
+                  />
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label htmlFor="reg-confirm" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    Confirm Password
+                  </label>
+                  <input
+                    id="reg-confirm"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    placeholder="Repeat your password"
+                    value={registerForm.confirmPassword}
+                    onChange={e => setRegisterForm(f => ({ ...f, confirmPassword: e.target.value }))}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)',
+                    }}
+                  />
+                </div>
+
+                {/* Country */}
+                <div>
+                  <label htmlFor="reg-country" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                    Country
+                  </label>
+                  <select
+                    id="reg-country"
+                    required
+                    value={registerForm.country}
+                    onChange={e => setRegisterForm(f => ({ ...f, country: e.target.value }))}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      color: registerForm.country ? 'var(--text-primary)' : 'var(--text-muted)',
+                    }}
+                  >
+                    <option value="" disabled>Select your country</option>
+                    {COUNTRIES.map(c => (
+                      <option key={c} value={c} style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Error */}
+                {registerError && (
+                  <p className="text-xs rounded-lg px-3 py-2" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
+                    {registerError}
+                  </p>
+                )}
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={registerLoading}
+                  className="btn-primary w-full flex items-center justify-center gap-2 mt-1"
+                  style={{ opacity: registerLoading ? 0.7 : 1 }}
+                >
+                  {registerLoading ? (
+                    <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
+                  ) : (
+                    <UserPlus size={14} aria-hidden="true" />
+                  )}
+                  {registerLoading ? 'Creating account…' : 'Create Account'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
     </main>
   )

@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Apply theme to <html> and persist
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
-    try { localStorage.setItem('aurum-theme', theme) } catch (_) {}
+    try { localStorage.setItem('armor-theme', theme) } catch (_) {}
   }, [theme])
 
   return (

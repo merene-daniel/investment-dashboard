@@ -25,7 +25,7 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Aurum — Investment Management',
+  title: 'Armor — Investment Management',
   description: 'Professional investment portfolio management dashboard',
 }
 
@@ -45,7 +45,7 @@ export default function RootLayout({
         {/* Anti-flash: read persisted theme before React hydrates */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('aurum-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(_){}`,
+            __html: `try{var t=localStorage.getItem('armor-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(_){}`,
           }}
         />
         <ThemeProvider>

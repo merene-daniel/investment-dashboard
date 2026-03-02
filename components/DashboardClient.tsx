@@ -44,8 +44,12 @@ const WishlistTab = dynamic(() => import('./tabs/WishlistTab'), {
   loading: () => <TabSkeleton />,
   ssr: false,
 })
+const SecurityTab = dynamic(() => import('./tabs/SecurityTab'), {
+  loading: () => <TabSkeleton />,
+  ssr: false,
+})
 
-export type TabType = 'overview' | 'holdings' | 'transactions' | 'analytics' | 'market' | 'wishlist'
+export type TabType = 'overview' | 'holdings' | 'transactions' | 'analytics' | 'market' | 'wishlist' | 'security'
 
 interface DashboardClientProps {
   initialData: {
@@ -130,6 +134,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {activeTab === 'wishlist' && (
                 <WishlistTab wishlist={initialData.wishlist} portfolio={portfolio} />
               )}
+              {activeTab === 'security' && <SecurityTab />}
             </>
           )}
         </main>
