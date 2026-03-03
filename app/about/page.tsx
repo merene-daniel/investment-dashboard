@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import {
-  ArrowLeft, ChevronRight, Building2, Target, Shield,
+  ChevronRight, Building2, Target, Shield,
   Users, Star, Award, Briefcase, Globe2, TrendingUp,
   CheckCircle, ExternalLink, Mail, Linkedin,
 } from 'lucide-react'
@@ -48,25 +48,33 @@ const MISSION_VALUES = [
     icon: Target,
     title: 'Radical Transparency',
     description: 'Every fee, data practice, and security control is documented and publicly accessible. No hidden algorithms, no dark patterns.',
-    color: '#eab308',
+    color: 'var(--gold)',
+    tintBg: 'rgba(234,179,8,0.08)',
+    tintBorder: 'rgba(234,179,8,0.2)',
   },
   {
     icon: Shield,
     title: 'Security First',
     description: 'Security is not a feature — it is a foundation. AES-256 encryption, SOC 2 Type II audits, and zero data selling are non-negotiable.',
-    color: '#10b981',
+    color: 'var(--profit)',
+    tintBg: 'rgba(16,185,129,0.08)',
+    tintBorder: 'rgba(16,185,129,0.2)',
   },
   {
     icon: TrendingUp,
     title: 'Investor Empowerment',
     description: 'We give independent investors the same analytical power that was previously reserved for institutional trading desks.',
-    color: '#3b82f6',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
   },
   {
     icon: Globe2,
     title: 'Accessibility',
     description: 'Professional investment tools should not require a Bloomberg Terminal subscription. We price for individuals, not hedge funds.',
-    color: '#8b5cf6',
+    color: 'var(--accent-purple)',
+    tintBg: 'rgba(139,92,246,0.08)',
+    tintBorder: 'rgba(139,92,246,0.2)',
   },
 ]
 
@@ -76,7 +84,9 @@ const TEAM = [
     role: 'CEO & Co-founder',
     bio: 'Former VP of Engineering at Goldman Sachs. 12 years in quantitative finance and high-frequency trading systems. CFA charterholder.',
     initials: 'DA',
-    color: '#eab308',
+    color: 'var(--gold)',
+    tintBg: 'rgba(234,179,8,0.08)',
+    tintBorder: 'rgba(234,179,8,0.2)',
     credentials: ['Goldman Sachs', 'CFA', 'MIT Computer Science'],
   },
   {
@@ -84,7 +94,9 @@ const TEAM = [
     role: 'CTO & Co-founder',
     bio: 'Previously led infrastructure engineering at Stripe. Architect of payment systems processing $50B+ annually. Open-source contributor.',
     initials: 'JO',
-    color: '#10b981',
+    color: 'var(--profit)',
+    tintBg: 'rgba(16,185,129,0.08)',
+    tintBorder: 'rgba(16,185,129,0.2)',
     credentials: ['Stripe', 'Stanford CS PhD', 'Open Source'],
   },
   {
@@ -92,7 +104,9 @@ const TEAM = [
     role: 'Chief Security Officer',
     bio: 'CISSP-certified. Former Head of Security at Morgan Stanley. Led SOC 2 and ISO 27001 audits across three enterprise platforms.',
     initials: 'PN',
-    color: '#3b82f6',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
     credentials: ['Morgan Stanley', 'CISSP', 'ISO 27001 Lead Auditor'],
   },
   {
@@ -100,7 +114,9 @@ const TEAM = [
     role: 'Head of Product',
     bio: 'Ex-Robinhood product lead with a decade designing fintech UX. Obsessed with making complex financial data instantly understandable.',
     initials: 'DR',
-    color: '#8b5cf6',
+    color: 'var(--accent-purple)',
+    tintBg: 'rgba(139,92,246,0.08)',
+    tintBorder: 'rgba(139,92,246,0.2)',
     credentials: ['Robinhood', 'Y Combinator', 'Wharton MBA'],
   },
   {
@@ -108,7 +124,9 @@ const TEAM = [
     role: 'Head of Data Science',
     bio: 'Quantitative researcher with a PhD in Financial Mathematics from ETH Zurich. Designed David Armor\'s risk models and benchmark analysis engine.',
     initials: 'LK',
-    color: '#f59e0b',
+    color: 'var(--accent-amber)',
+    tintBg: 'rgba(245,158,11,0.08)',
+    tintBorder: 'rgba(245,158,11,0.2)',
     credentials: ['ETH Zurich PhD', 'BlackRock', 'GARP FRM'],
   },
   {
@@ -116,7 +134,9 @@ const TEAM = [
     role: 'Head of Compliance',
     bio: 'Regulatory specialist with 15 years across SEC, FINRA, GDPR, and CCPA frameworks. Ensures every product decision meets or exceeds legal standards.',
     initials: 'TA',
-    color: '#ef4444',
+    color: 'var(--loss)',
+    tintBg: 'rgba(239,68,68,0.08)',
+    tintBorder: 'rgba(239,68,68,0.2)',
     credentials: ['SEC', 'FINRA', 'GDPR DPO Certified'],
   },
 ]
@@ -151,7 +171,7 @@ export default function AboutPage() {
             borderBottom: '1px solid rgba(234,179,8,0.1)',
           }}
         >
-          <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="max-w-5xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
             <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -168,16 +188,14 @@ export default function AboutPage() {
               </span>
             </Link>
 
-            <div className="flex items-center gap-3">
+            <nav className="hidden md:flex items-center justify-center gap-6" aria-label="Site navigation">
+              <Link href="/education" className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>Education</Link>
+              <Link href="/security"  className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>Security</Link>
+              <Link href="/about"     className="text-sm font-medium" style={{ color: '#eab308' }}>About</Link>
+            </nav>
+
+            <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex items-center gap-1.5 text-sm transition-colors"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                <ArrowLeft size={14} aria-hidden="true" />
-                Back to Home
-              </Link>
               <Link
                 href="/dashboard"
                 className="btn-primary flex items-center gap-2 text-sm"
@@ -371,7 +389,7 @@ export default function AboutPage() {
                 <div key={v.title} className="glass-card p-6 flex gap-4">
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${v.color}18`, border: `1px solid ${v.color}30` }}
+                    style={{ background: v.tintBg, border: `1px solid ${v.tintBorder}` }}
                   >
                     <Icon size={20} style={{ color: v.color }} aria-hidden="true" />
                   </div>

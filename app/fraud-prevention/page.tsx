@@ -22,33 +22,70 @@ const RED_FLAGS = [
 const ARMOR_PROTECTIONS = [
   {
     icon: Lock,
-    color: '#10b981',
+    color: 'var(--accent-green)',
+    tintBg: 'rgba(16,185,129,0.08)',
+    tintBorder: 'rgba(16,185,129,0.2)',
     title: 'Password Security',
     desc: 'All passwords are hashed using scrypt with a unique random salt before storage. Even in the unlikely event of a database breach, your plaintext password is never exposed.',
   },
   {
     icon: Shield,
-    color: '#3b82f6',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
     title: 'Multi-Factor Authentication',
     desc: 'Enabling MFA means a stolen password alone is not enough to access your account. A time-limited one-time code sent to your phone or email is required on every login from a new device.',
   },
   {
     icon: Eye,
-    color: '#8b5cf6',
+    color: 'var(--accent-purple)',
+    tintBg: 'rgba(139,92,246,0.08)',
+    tintBorder: 'rgba(139,92,246,0.2)',
     title: 'Session Management',
     desc: 'Sessions expire automatically after a period of inactivity. Concurrent login detection flags suspicious simultaneous sessions from different locations.',
   },
   {
     icon: AlertTriangle,
-    color: '#f59e0b',
+    color: 'var(--accent-amber)',
+    tintBg: 'rgba(245,158,11,0.08)',
+    tintBorder: 'rgba(245,158,11,0.2)',
     title: 'Rate Limiting',
     desc: 'Login attempts are rate-limited and throttled. Repeated failed attempts trigger a temporary lockout and alert email to the account owner.',
   },
   {
     icon: MessageSquare,
-    color: '#ef4444',
+    color: 'var(--loss)',
+    tintBg: 'rgba(239,68,68,0.08)',
+    tintBorder: 'rgba(239,68,68,0.2)',
     title: 'OTP Integrity',
     desc: 'MFA codes are single-use, expire in 10 minutes, and are stored only as cryptographic hashes. A new code request immediately invalidates all outstanding tokens.',
+  },
+]
+
+const PHISHING_CHANNELS = [
+  {
+    icon: Mail,
+    label: 'Email Phishing',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
+    desc: 'Fake emails mimicking Armor security alerts or account notifications. Always check the sender domain carefully and hover over links before clicking.',
+  },
+  {
+    icon: Phone,
+    label: 'Vishing (Voice)',
+    color: 'var(--accent-amber)',
+    tintBg: 'rgba(245,158,11,0.08)',
+    tintBorder: 'rgba(245,158,11,0.2)',
+    desc: 'Fraudsters call posing as Armor support agents, often claiming a suspicious login was detected. Armor does not make unsolicited outbound calls.',
+  },
+  {
+    icon: MousePointer,
+    label: 'Fake Websites',
+    color: 'var(--loss)',
+    tintBg: 'rgba(239,68,68,0.08)',
+    tintBorder: 'rgba(239,68,68,0.2)',
+    desc: 'Lookalike sites that replicate the Armor login page to capture credentials. Always verify the URL is exactly armor-invest.com with a valid HTTPS padlock.',
   },
 ]
 
@@ -99,7 +136,7 @@ export default function FraudPreventionPage() {
           style={{ background: 'radial-gradient(ellipse at center, rgba(239,68,68,0.05) 0%, transparent 65%)' }} />
         <div className="relative max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6"
-            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
+            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: 'var(--loss)' }}>
             <AlertTriangle size={11} aria-hidden="true" /> Fraud Prevention
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
@@ -116,9 +153,9 @@ export default function FraudPreventionPage() {
 
         {/* ── Alert Banner ── */}
         <div className="flex items-start gap-4 p-5 rounded-2xl" style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.25)' }}>
-          <AlertCircle size={20} className="flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} aria-hidden="true" />
+          <AlertCircle size={20} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--loss)' }} aria-hidden="true" />
           <div>
-            <p className="font-semibold mb-1" style={{ color: '#ef4444' }}>Important Reminder</p>
+            <p className="font-semibold mb-1" style={{ color: 'var(--loss)' }}>Important Reminder</p>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Armor will <strong style={{ color: 'var(--text-primary)' }}>never</strong> ask for your password, MFA code, or full financial account numbers via email, phone, SMS, or live chat. If anyone claiming to be from Armor asks for these, it is fraud. Hang up or close the tab immediately.
             </p>
@@ -136,7 +173,7 @@ export default function FraudPreventionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {RED_FLAGS.map(f => (
               <div key={f.label} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                <XCircle size={15} className="flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} aria-hidden="true" />
+                <XCircle size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--loss)' }} aria-hidden="true" />
                 <div>
                   <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>{f.label}</p>
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
@@ -157,15 +194,15 @@ export default function FraudPreventionPage() {
                 background: i === 0 ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)',
                 border: `1px solid ${i === 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
               }}>
-                <h3 className="font-semibold mb-4 text-sm" style={{ color: i === 0 ? '#10b981' : '#ef4444' }}>
+                <h3 className="font-semibold mb-4 text-sm" style={{ color: i === 0 ? 'var(--profit)' : 'var(--loss)' }}>
                   {col.type}
                 </h3>
                 <ul className="flex flex-col gap-2.5">
                   {col.items.map(item => (
                     <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {i === 0
-                        ? <CheckCircle size={13} className="flex-shrink-0 mt-0.5" style={{ color: '#10b981' }} aria-hidden="true" />
-                        : <XCircle    size={13} className="flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} aria-hidden="true" />
+                        ? <CheckCircle size={13} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--profit)' }} aria-hidden="true" />
+                        : <XCircle    size={13} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--loss)'   }} aria-hidden="true" />
                       }
                       {item}
                     </li>
@@ -186,7 +223,7 @@ export default function FraudPreventionPage() {
               const Icon = p.icon
               return (
                 <div key={p.title} className="flex items-start gap-4 p-5 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${p.color}18`, border: `1px solid ${p.color}30` }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: p.tintBg, border: `1px solid ${p.tintBorder}` }}>
                     <Icon size={16} style={{ color: p.color }} aria-hidden="true" />
                   </div>
                   <div>
@@ -205,15 +242,11 @@ export default function FraudPreventionPage() {
             Common Attack Channels
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { icon: Mail,          label: 'Email Phishing',   color: '#3b82f6', desc: 'Fake emails mimicking Armor security alerts or account notifications. Always check the sender domain carefully and hover over links before clicking.' },
-              { icon: Phone,         label: 'Vishing (Voice)',  color: '#f59e0b', desc: 'Fraudsters call posing as Armor support agents, often claiming a suspicious login was detected. Armor does not make unsolicited outbound calls.' },
-              { icon: MousePointer,  label: 'Fake Websites',   color: '#ef4444', desc: 'Lookalike sites that replicate the Armor login page to capture credentials. Always verify the URL is exactly armor-invest.com with a valid HTTPS padlock.' },
-            ].map(c => {
+            {PHISHING_CHANNELS.map(c => {
               const Icon = c.icon
               return (
                 <div key={c.label} className="flex flex-col gap-2 p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${c.color}18`, border: `1px solid ${c.color}30` }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: c.tintBg, border: `1px solid ${c.tintBorder}` }}>
                     <Icon size={15} style={{ color: c.color }} aria-hidden="true" />
                   </div>
                   <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{c.label}</p>
@@ -254,7 +287,7 @@ export default function FraudPreventionPage() {
         {/* ── Report Contact ── */}
         <section aria-labelledby="fraud-contact-heading" className="rounded-2xl p-6 text-center"
           style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.2)' }}>
-          <AlertTriangle size={28} className="mx-auto mb-3" style={{ color: '#ef4444' }} aria-hidden="true" />
+          <AlertTriangle size={28} className="mx-auto mb-3" style={{ color: 'var(--loss)' }} aria-hidden="true" />
           <h2 id="fraud-contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Report Fraud or Suspicious Activity
           </h2>
@@ -280,7 +313,7 @@ export default function FraudPreventionPage() {
           </Link>
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <Link href="/privacy"          className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Privacy</Link>
-            <Link href="/fraud-prevention" className="text-xs transition-colors" style={{ color: '#eab308' }}>Fraud Prevention</Link>
+            <Link href="/fraud-prevention" className="text-xs transition-colors" style={{ color: 'var(--gold)' }}>Fraud Prevention</Link>
             <Link href="/accessibility"    className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Accessibility</Link>
           </div>
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>© {new Date().getFullYear()} Armor Investment Management.</p>

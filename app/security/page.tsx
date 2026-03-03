@@ -5,7 +5,7 @@ import {
   Shield, Lock, Eye, Server, Key, FileCheck,
   Globe2, UserCheck, Database, RefreshCw,
   ChevronRight, AlertTriangle, CheckCircle,
-  ArrowLeft, Mail,
+  Mail,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
@@ -167,8 +167,7 @@ export default function SecurityPage() {
             borderBottom: '1px solid rgba(234,179,8,0.1)',
           }}
         >
-          <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            {/* Logo */}
+          <div className="max-w-5xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
             <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -185,25 +184,23 @@ export default function SecurityPage() {
               </span>
             </Link>
 
-            {/* <div className="flex items-center gap-3">
+            <nav className="hidden md:flex items-center justify-center gap-6" aria-label="Site navigation">
+              <Link href="/education" className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>Education</Link>
+              <Link href="/security"  className="text-sm font-medium" style={{ color: '#eab308' }}>Security</Link>
+              <Link href="/about"     className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>About</Link>
+            </nav>
+
+            <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex items-center gap-1.5 text-sm transition-colors"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                <ArrowLeft size={14} aria-hidden="true" />
-                Back to Home
-              </Link>
               <Link
                 href="/dashboard"
                 className="btn-primary flex items-center gap-2 text-sm"
                 aria-label="Open the investment dashboard"
               >
-                Open Dashboard
+                Dashboard
                 <ChevronRight size={14} aria-hidden="true" />
               </Link>
-            </div> */}
+            </div>
           </div>
         </nav>
       </header>

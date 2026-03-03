@@ -14,7 +14,9 @@ const STANDARDS = [
   {
     icon: Eye,
     title: 'Perceivable',
-    color: '#3b82f6',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
     items: [
       'All non-text content has descriptive alternative text',
       'Color is never the sole means of conveying information',
@@ -25,7 +27,9 @@ const STANDARDS = [
   {
     icon: Keyboard,
     title: 'Operable',
-    color: '#10b981',
+    color: 'var(--accent-green)',
+    tintBg: 'rgba(16,185,129,0.08)',
+    tintBorder: 'rgba(16,185,129,0.2)',
     items: [
       'All interactive elements are fully keyboard-navigable',
       'Visible focus indicators on every focusable element',
@@ -36,7 +40,9 @@ const STANDARDS = [
   {
     icon: Monitor,
     title: 'Understandable',
-    color: '#8b5cf6',
+    color: 'var(--accent-purple)',
+    tintBg: 'rgba(139,92,246,0.08)',
+    tintBorder: 'rgba(139,92,246,0.2)',
     items: [
       'Language of each page is declared in the HTML element',
       'Error messages identify the field and describe the problem',
@@ -47,7 +53,9 @@ const STANDARDS = [
   {
     icon: Volume2,
     title: 'Robust',
-    color: '#f59e0b',
+    color: 'var(--accent-amber)',
+    tintBg: 'rgba(245,158,11,0.08)',
+    tintBorder: 'rgba(245,158,11,0.2)',
     items: [
       'Semantic HTML used throughout for screen-reader compatibility',
       'ARIA roles, labels, and live regions applied where appropriate',
@@ -108,7 +116,7 @@ export default function AccessibilityPage() {
           style={{ background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.05) 0%, transparent 65%)' }} />
         <div className="relative max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6"
-            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: '#eab308' }}>
+            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
             <Eye size={11} aria-hidden="true" /> Accessibility Policy
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
@@ -137,7 +145,7 @@ export default function AccessibilityPage() {
               return (
                 <div key={s.title} className="rounded-2xl p-5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${s.color}18`, border: `1px solid ${s.color}30` }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.tintBg, border: `1px solid ${s.tintBorder}` }}>
                       <Icon size={16} style={{ color: s.color }} aria-hidden="true" />
                     </div>
                     <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{s.title}</h3>
@@ -167,7 +175,7 @@ export default function AccessibilityPage() {
               return (
                 <div key={f.title} className="flex items-start gap-4 p-5 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)' }}>
-                    <Icon size={16} style={{ color: '#eab308' }} aria-hidden="true" />
+                    <Icon size={16} style={{ color: 'var(--gold)' }} aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
@@ -190,7 +198,7 @@ export default function AccessibilityPage() {
           <div className="flex flex-col gap-3">
             {LIMITATIONS.map(l => (
               <div key={l.area} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-                <AlertCircle size={15} className="flex-shrink-0 mt-0.5" style={{ color: '#ef4444' }} aria-hidden="true" />
+                <AlertCircle size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--loss)' }} aria-hidden="true" />
                 <div>
                   <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{l.area}: </span>
                   <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{l.detail}</span>
@@ -215,7 +223,7 @@ export default function AccessibilityPage() {
 
         {/* ── Contact ── */}
         <section aria-labelledby="contact-heading" className="rounded-2xl p-6 text-center" style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.15)' }}>
-          <Mail size={28} className="mx-auto mb-3" style={{ color: '#eab308' }} aria-hidden="true" />
+          <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
           <h2 id="contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Report an Accessibility Issue
           </h2>
@@ -244,7 +252,7 @@ export default function AccessibilityPage() {
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <Link href="/privacy"          className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Privacy</Link>
             <Link href="/fraud-prevention" className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Fraud Prevention</Link>
-            <Link href="/accessibility"    className="text-xs transition-colors" style={{ color: '#eab308' }}>Accessibility</Link>
+            <Link href="/accessibility"    className="text-xs transition-colors" style={{ color: 'var(--gold)' }}>Accessibility</Link>
           </div>
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>© {new Date().getFullYear()} Armor Investment Management.</p>
         </div>

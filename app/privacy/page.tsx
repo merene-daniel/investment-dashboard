@@ -12,7 +12,9 @@ const LAST_UPDATED = 'March 2026'
 const DATA_COLLECTED = [
   {
     icon: Database,
-    color: '#3b82f6',
+    color: 'var(--accent-blue)',
+    tintBg: 'rgba(59,130,246,0.08)',
+    tintBorder: 'rgba(59,130,246,0.2)',
     title: 'Account Information',
     items: [
       'Email address and username (required to create an account)',
@@ -23,7 +25,9 @@ const DATA_COLLECTED = [
   },
   {
     icon: Globe,
-    color: '#10b981',
+    color: 'var(--accent-green)',
+    tintBg: 'rgba(16,185,129,0.08)',
+    tintBorder: 'rgba(16,185,129,0.2)',
     title: 'Portfolio & Financial Data',
     items: [
       'Holdings, transactions, and portfolio names you enter into the dashboard',
@@ -34,7 +38,9 @@ const DATA_COLLECTED = [
   },
   {
     icon: Eye,
-    color: '#8b5cf6',
+    color: 'var(--accent-purple)',
+    tintBg: 'rgba(139,92,246,0.08)',
+    tintBorder: 'rgba(139,92,246,0.2)',
     title: 'Usage & Technical Data',
     items: [
       'Browser type, operating system, and screen resolution (anonymous diagnostics)',
@@ -45,7 +51,9 @@ const DATA_COLLECTED = [
   },
   {
     icon: Bell,
-    color: '#f59e0b',
+    color: 'var(--accent-amber)',
+    tintBg: 'rgba(245,158,11,0.08)',
+    tintBorder: 'rgba(245,158,11,0.2)',
     title: 'Communication Data',
     items: [
       'Emails you send to our support or accessibility teams',
@@ -107,7 +115,7 @@ export default function PrivacyPage() {
           style={{ background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.05) 0%, transparent 65%)' }} />
         <div className="relative max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6"
-            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: '#eab308' }}>
+            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
             <Lock size={11} aria-hidden="true" /> Privacy Policy
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
@@ -136,7 +144,7 @@ export default function PrivacyPage() {
               return (
                 <div key={d.title} className="rounded-2xl p-5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${d.color}18`, border: `1px solid ${d.color}30` }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: d.tintBg, border: `1px solid ${d.tintBorder}` }}>
                       <Icon size={16} style={{ color: d.color }} aria-hidden="true" />
                     </div>
                     <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{d.title}</h3>
@@ -169,7 +177,7 @@ export default function PrivacyPage() {
               ['Legal compliance', 'We retain minimum data required to meet financial regulation obligations in applicable jurisdictions and respond to lawful requests from authorities.'],
             ].map(([title, desc]) => (
               <div key={title} className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
-                <ChevronRight size={14} className="flex-shrink-0 mt-0.5" style={{ color: '#eab308' }} aria-hidden="true" />
+                <ChevronRight size={14} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--gold)' }} aria-hidden="true" />
                 <div>
                   <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{title}: </span>
                   {desc}
@@ -187,7 +195,7 @@ export default function PrivacyPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {SECURITY_MEASURES.map(measure => (
               <div key={measure} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                <Lock size={13} className="flex-shrink-0 mt-0.5" style={{ color: '#10b981' }} aria-hidden="true" />
+                <Lock size={13} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--profit)' }} aria-hidden="true" />
                 <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{measure}</span>
               </div>
             ))}
@@ -197,7 +205,7 @@ export default function PrivacyPage() {
         {/* ── Third Parties ── */}
         <section aria-labelledby="third-party-heading" className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center gap-3 mb-4">
-            <Share2 size={18} style={{ color: '#eab308' }} aria-hidden="true" />
+            <Share2 size={18} style={{ color: 'var(--gold)' }} aria-hidden="true" />
             <h2 id="third-party-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
               Third-Party Services
             </h2>
@@ -243,7 +251,7 @@ export default function PrivacyPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {RIGHTS.map(r => (
               <div key={r.title} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                <h3 className="font-semibold text-sm mb-1" style={{ color: '#eab308' }}>{r.title}</h3>
+                <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--gold)' }}>{r.title}</h3>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{r.desc}</p>
               </div>
             ))}
@@ -253,11 +261,11 @@ export default function PrivacyPage() {
         {/* ── Deletion ── */}
         <section aria-labelledby="deletion-heading" className="flex items-start gap-4 p-5 rounded-2xl"
           style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-          <Trash2 size={20} className="flex-shrink-0 mt-1" style={{ color: '#ef4444' }} aria-hidden="true" />
+          <Trash2 size={20} className="flex-shrink-0 mt-1" style={{ color: 'var(--loss)' }} aria-hidden="true" />
           <div>
             <h2 id="deletion-heading" className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Account &amp; Data Deletion</h2>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              To permanently delete your account and all associated data (holdings, transactions, performance history, and account details), email us at <a href="mailto:privacy@armor-invest.com" className="underline" style={{ color: '#eab308' }}>privacy@armor-invest.com</a> with the subject line "Delete My Account". We will complete the deletion within 30 days and send a confirmation. Backups are purged within 90 days of deletion.
+              To permanently delete your account and all associated data (holdings, transactions, performance history, and account details), email us at <a href="mailto:privacy@armor-invest.com" className="underline" style={{ color: 'var(--gold)' }}>privacy@armor-invest.com</a> with the subject line "Delete My Account". We will complete the deletion within 30 days and send a confirmation. Backups are purged within 90 days of deletion.
             </p>
           </div>
         </section>
@@ -265,7 +273,7 @@ export default function PrivacyPage() {
         {/* ── Contact ── */}
         <section aria-labelledby="privacy-contact-heading" className="rounded-2xl p-6 text-center"
           style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.15)' }}>
-          <Mail size={28} className="mx-auto mb-3" style={{ color: '#eab308' }} aria-hidden="true" />
+          <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
           <h2 id="privacy-contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Privacy Enquiries
           </h2>
@@ -289,7 +297,7 @@ export default function PrivacyPage() {
             <span className="text-base font-bold gold-text" style={{ fontFamily: 'var(--font-display)' }}>Armor</span>
           </Link>
           <div className="flex items-center gap-4 flex-wrap justify-center">
-            <Link href="/privacy"          className="text-xs transition-colors" style={{ color: '#eab308' }}>Privacy</Link>
+            <Link href="/privacy"          className="text-xs transition-colors" style={{ color: 'var(--gold)' }}>Privacy</Link>
             <Link href="/fraud-prevention" className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Fraud Prevention</Link>
             <Link href="/accessibility"    className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Accessibility</Link>
           </div>

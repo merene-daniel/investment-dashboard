@@ -19,7 +19,13 @@
   --loss: #ef4444;
   --text-primary: #f5f0e8;
   --text-secondary: #8c8a77;
-  --text-muted: #4a4a3a;
+  --text-muted: #8e8e7e;        /* raised from #4a4a3a → 5.4:1 on bg-card */
+
+  /* ── Accessible accent palette (≥4.5:1 on bg-card #181814) ── */
+  --accent-blue:   #3b82f6;    /* 4.8:1 */
+  --accent-green:  #10b981;    /* 7.0:1 */
+  --accent-purple: #9c72f0;    /* 5.2:1  (brightened from #8b5cf6 which was 4.2:1) */
+  --accent-amber:  #f59e0b;    /* 8.3:1 */
 }
 
 /* ── Light mode overrides ── */
@@ -30,13 +36,19 @@
   --bg-card-hover: #f8f7f2;
   --border:        rgba(134, 99, 0, 0.14);
   --border-hover:  rgba(134, 99, 0, 0.3);
-  --gold:          #9a7000;
-  --gold-muted:    rgba(134, 99, 0, 0.7);
+  --gold:          #8a6200;     /* raised from #9a7000 → 5.5:1 on white */
+  --gold-muted:    rgba(138, 98, 0, 0.7);
   --profit:        #06724e;
   --loss:          #c0392b;
   --text-primary:  #1c1c12;
   --text-secondary: #5c5a46;
-  --text-muted:    #9a9880;
+  --text-muted:    #6b6956;     /* raised from #9a9880 → 5.1:1 on bg-primary */
+
+  /* ── Accessible accent palette (≥4.5:1 on bg-card #ffffff) ── */
+  --accent-blue:   #1d4ed8;    /* 6.7:1 */
+  --accent-green:  #06724e;    /* 6.0:1  (= --profit) */
+  --accent-purple: #6d28d9;    /* 7.1:1 */
+  --accent-amber:  #9a6500;    /* 4.95:1 */
 }
 
 * {
@@ -345,7 +357,7 @@ select option {
 
 /* Gold gradient text — use darker gold shades for contrast on light bg */
 [data-theme="light"] .gold-text {
-  background: linear-gradient(135deg, #7a5c00 0%, #b8860b 50%, #6b5000 100%);
+  background: linear-gradient(135deg, #7a5c00 0%, #8a6200 50%, #6b5000 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

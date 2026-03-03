@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import {
-  ArrowLeft, ChevronRight, Shield, Search, X,
+  ChevronRight, Shield, Search, X,
   TrendingUp, BarChart2, BookOpen, DollarSign,
   PieChart, Target, Repeat, FileText, Activity,
   Play, Clock, CheckCircle, ChevronDown, ChevronUp,
@@ -586,7 +586,7 @@ export default function EducationPage() {
             borderBottom: '1px solid var(--border)',
           }}
         >
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
             <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -600,16 +600,14 @@ export default function EducationPage() {
               </span>
             </Link>
 
-            <div className="flex items-center gap-3">
+            <nav className="hidden md:flex items-center justify-center gap-6" aria-label="Site navigation">
+              <Link href="/education" className="text-sm font-medium" style={{ color: '#eab308' }}>Education</Link>
+              <Link href="/security"  className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>Security</Link>
+              <Link href="/about"     className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>About</Link>
+            </nav>
+
+            <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex items-center gap-1.5 text-sm transition-colors"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                <ArrowLeft size={14} aria-hidden="true" />
-                Back to Home
-              </Link>
               <Link
                 href="/dashboard"
                 className="btn-primary flex items-center gap-2 text-sm"
