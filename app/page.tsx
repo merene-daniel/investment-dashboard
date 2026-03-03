@@ -423,7 +423,7 @@ export default function LandingPage() {
                   <a
                     href={item.href}
                     className="text-sm transition-colors duration-200 hover:text-yellow-400"
-                    style={{ color: 'var(--text-secondary)' }}
+                    style={{ color: scrolled ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)' }}
                   >
                     {item.label}
                   </a>
