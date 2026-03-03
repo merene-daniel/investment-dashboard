@@ -616,7 +616,7 @@ export default function EducationPage() {
 
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
+              <Button variant={scrolled ? 'default' : 'outline'} size="sm" asChild className="hidden md:inline-flex">
                 <Link href="/" aria-label="Log in to your Armor account">
                   Login
                 </Link>

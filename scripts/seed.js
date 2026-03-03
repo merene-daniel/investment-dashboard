@@ -129,7 +129,7 @@ async function seed() {
   const totalValue = totalMarketValue + cashBalance
 
   const portfolio = await Portfolio.create({
-    name: 'Growth Portfolio Alpha',
+    name: 'Growth Portfolio',
     description: 'Diversified growth portfolio focused on technology and blue-chip equities',
     totalValue: Math.round(totalValue * 100) / 100,
     cashBalance,

@@ -447,7 +447,7 @@ export default function LandingPage() {
                 {mobileNavOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
               </Button>
               <Button
-                variant="outline"
+                variant={scrolled ? 'default' : 'outline'}
                 className="hidden md:flex"
                 onClick={openLogin}
                 aria-label="Log in to your Armor account"
