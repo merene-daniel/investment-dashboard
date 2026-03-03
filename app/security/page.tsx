@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import {
   Shield, Lock, Eye, Server, Key, FileCheck,
   Globe2, UserCheck, Database, RefreshCw,
-  ChevronRight, AlertTriangle, CheckCircle,
+  AlertTriangle, CheckCircle,
   Mail,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -154,6 +155,14 @@ const DATA_HANDLING = [
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function SecurityPage() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <main id="main-content" className="min-h-screen overflow-x-hidden">
 
@@ -163,8 +172,9 @@ export default function SecurityPage() {
           aria-label="Primary navigation"
           className="sticky top-0 z-50 backdrop-blur-xl"
           style={{
-            background:   'rgba(13,13,10,0.88)',
-            borderBottom: '1px solid rgba(234,179,8,0.1)',
+            background:   scrolled ? 'rgba(13,13,10,0.88)' : 'transparent',
+            borderBottom: scrolled ? '1px solid rgba(234,179,8,0.1)' : '1px solid transparent',
+            transition:   'background 0.3s ease, border-color 0.3s ease',
           }}
         >
           <div className="max-w-5xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
@@ -185,20 +195,26 @@ export default function SecurityPage() {
             </Link>
 
             <nav className="hidden md:flex items-center justify-center gap-6" aria-label="Site navigation">
-              <Link href="/education" className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>Education</Link>
-              <Link href="/security"  className="text-sm font-medium" style={{ color: '#eab308' }}>Security</Link>
-              <Link href="/about"     className="text-sm transition-colors hover:text-yellow-400" style={{ color: 'var(--text-secondary)' }}>About</Link>
+              <Link href="/education" className="text-sm transition-colors hover:text-yellow-400" style={{ color: scrolled ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)' }}>Education</Link>
+              <Link href="/security"  className="text-sm font-medium" style={{ color: 'var(--gold)' }}>Security</Link>
+              <Link href="/about"     className="text-sm transition-colors hover:text-yellow-400" style={{ color: scrolled ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)' }}>About</Link>
             </nav>
 
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
               <Link
-                href="/dashboard"
-                className="btn-primary flex items-center gap-2 text-sm"
-                aria-label="Open the investment dashboard"
+                href="/"
+                className="hidden md:flex btn-secondary text-sm"
+                aria-label="Log in to your Armor account"
               >
-                Dashboard
-                <ChevronRight size={14} aria-hidden="true" />
+                Login
+              </Link>
+              <Link
+                href="/"
+                className="hidden md:flex btn-secondary text-sm"
+                aria-label="Open a new Armor account"
+              >
+                Open Account
               </Link>
             </div>
           </div>
