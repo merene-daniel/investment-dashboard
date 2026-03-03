@@ -44,19 +44,19 @@ export default function Sidebar({ activeTab, setActiveTab, open, setOpen, portfo
       {/* Logo */}
       <Link
         href="/"
-        aria-label="Armor — go to home page"
+        aria-label="David  — go to home page"
         className="flex items-center gap-3 p-5 pb-6 transition-opacity hover:opacity-80"
       >
         <div
           className="relative flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
         >
-          <span className="text-black font-bold text-sm">A</span>
+          <Shield size={18} color="#000" aria-hidden="true" />
           <div className="absolute inset-0 rounded-xl pulse-ring" style={{ color: '#eab308' }} />
         </div>
         {open && (
           <div className="overflow-hidden">
-            <div className="font-display font-semibold text-lg leading-tight gold-text">Armor</div>
+            <div className="font-display font-semibold text-lg leading-tight gold-text">David Armor</div>
             <div className="text-xs" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>INVESTTRACK</div>
           </div>
         )}

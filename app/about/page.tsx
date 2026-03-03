@@ -14,7 +14,7 @@ const MILESTONES = [
   {
     year: '2019',
     title: 'Founded',
-    description: 'Armor was founded by a team of ex-Goldman Sachs engineers and quant analysts frustrated with the lack of institutional-grade tools for independent investors.',
+    description: 'David Armor was founded by a team of ex-Goldman Sachs engineers and quant analysts frustrated with the lack of institutional-grade tools for independent investors.',
   },
   {
     year: '2021',
@@ -72,10 +72,10 @@ const MISSION_VALUES = [
 
 const TEAM = [
   {
-    name: 'Alexandra Mercer',
+    name: 'David Armor',
     role: 'CEO & Co-founder',
     bio: 'Former VP of Engineering at Goldman Sachs. 12 years in quantitative finance and high-frequency trading systems. CFA charterholder.',
-    initials: 'AM',
+    initials: 'DA',
     color: '#eab308',
     credentials: ['Goldman Sachs', 'CFA', 'MIT Computer Science'],
   },
@@ -106,7 +106,7 @@ const TEAM = [
   {
     name: 'Lena Kovač',
     role: 'Head of Data Science',
-    bio: 'Quantitative researcher with a PhD in Financial Mathematics from ETH Zurich. Designed Armor\'s risk models and benchmark analysis engine.',
+    bio: 'Quantitative researcher with a PhD in Financial Mathematics from ETH Zurich. Designed David Armor\'s risk models and benchmark analysis engine.',
     initials: 'LK',
     color: '#f59e0b',
     credentials: ['ETH Zurich PhD', 'BlackRock', 'GARP FRM'],
@@ -152,19 +152,19 @@ export default function AboutPage() {
           }}
         >
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3" aria-label="Back to Armor home">
+            <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
               <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm text-black"
+                className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
                 aria-hidden="true"
               >
-                A
+                <Shield size={16} color="#000" />
               </div>
               <span
                 className="text-lg font-bold gold-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                Armor
+                David Armor
               </span>
             </Link>
 
@@ -183,7 +183,7 @@ export default function AboutPage() {
                 className="btn-primary flex items-center gap-2 text-sm"
                 aria-label="Open the investment dashboard"
               >
-                Open Dashboard
+                Dashboard
                 <ChevronRight size={14} aria-hidden="true" />
               </Link>
             </div>
@@ -212,7 +212,7 @@ export default function AboutPage() {
             }}
           >
             <Building2 size={12} aria-hidden="true" />
-            About Armor
+            About David Armor
           </div>
 
           <h1
@@ -220,16 +220,17 @@ export default function AboutPage() {
             className="text-4xl md:text-6xl font-bold leading-tight mb-5"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
           >
-            Built by Investors,{' '}
-            <span className="gold-text">for Investors</span>
+            Built by Bankrupt Investor,{' '}
+            <span className="gold-text">for New Investors</span>
           </h1>
 
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed mb-12"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Armor was born from a simple conviction: every independent investor deserves
-            institutional-grade portfolio tools — without the institutional price tag.
+            David Armor Financial Platform was born from the experience of market adversity and the conviction that independent investors should never be left at a disadvantage.
+
+          After David Armor has witnessed the impact of his heavy financial losses and bankruptcies, he and his company have committed to building a platform that delivers fair, balanced, and ethical institutional-grade portfolio tools — without the institutional price tag. Help him God!
           </p>
 
           {/* Quick stats row */}
@@ -270,7 +271,7 @@ export default function AboutPage() {
           </h2>
           <p className="max-w-2xl mb-14" style={{ color: 'var(--text-secondary)' }}>
             From a side project between two engineers to a platform trusted by over 10,000 investors
-            across 40 countries — this is how Armor grew.
+            across 40 countries — this is how David Armor grew.
           </p>
 
           {/* Timeline */}
@@ -587,7 +588,7 @@ export default function AboutPage() {
                 <span className="gold-text">like a pro?</span>
               </h2>
               <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                Join 10,000+ investors who trust Armor to manage and grow their wealth with
+                Join 10,000+ investors who trust David Armor to manage and grow their wealth with
                 data-driven precision.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -596,7 +597,7 @@ export default function AboutPage() {
                   className="btn-primary flex items-center gap-2"
                   aria-label="Open your investment dashboard"
                 >
-                  Open Dashboard
+                  Dashboard
                   <ChevronRight size={16} aria-hidden="true" />
                 </Link>
                 <a
@@ -620,21 +621,21 @@ export default function AboutPage() {
         style={{ borderTop: '1px solid rgba(234,179,8,0.07)' }}
       >
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Armor home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="David Armor home">
             <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs text-black"
+              className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
               aria-hidden="true"
             >
-              A
+              <Shield size={14} color="#000" />
             </div>
             <span className="text-base font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-              Armor
+              David Armor
             </span>
           </Link>
 
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} Armor Investment Management. All rights reserved.
+            © {new Date().getFullYear()} David Armor Investment Management. All rights reserved.
           </p>
 
         </div>

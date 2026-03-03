@@ -142,7 +142,7 @@ const PLANS = [
     cta: 'Start Free Trial',
     href: '/dashboard',
     highlight: true,
-    badge: 'Most Popular',
+    badge: null,
   },
   {
     name: 'Enterprise',
@@ -166,10 +166,11 @@ const PLANS = [
 ]
 
 const NAV_LINKS = [
-  { label: 'Features', href: '#features'  },
-  { label: 'Pricing',  href: '#pricing'   },
-  { label: 'Security', href: '/security'  },
-  { label: 'About',    href: '/about'     },
+  { label: 'Features',  href: '#features'   },
+  { label: 'Pricing',   href: '#pricing'    },
+  { label: 'Education', href: '/education'  },
+  { label: 'Security',  href: '/security'   },
+  { label: 'About',     href: '/about'      },
 ]
 
 const COUNTRIES = [
@@ -391,10 +392,10 @@ export default function LandingPage() {
             <Link href="/" className="flex items-center gap-3" aria-label="Armor home">
               <div className="relative w-9 h-9" aria-hidden="true">
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-base text-black"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center"
                   style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
                 >
-                  A
+                  <Shield size={18} color="#000" aria-hidden="true" />
                 </div>
                 <div className="absolute inset-0 rounded-xl pulse-ring" style={{ color: '#eab308', opacity: 0.35 }} />
               </div>
@@ -402,7 +403,7 @@ export default function LandingPage() {
                 className="text-xl font-bold tracking-wide gold-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                Armor
+                David Armor
               </span>
             </Link>
 
@@ -436,30 +437,28 @@ export default function LandingPage() {
               >
                 {mobileNavOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
               </button>
-              <Link
+              {/* <Link
                 href="/dashboard"
                 className="hidden md:flex btn-primary items-center gap-2 text-sm"
                 aria-label="Open the investment dashboard"
               >
-                Dashboard
+                Open Dashboard
                 <ArrowRight size={14} aria-hidden="true" />
-              </Link>
+              </Link> */}
               <button
                 type="button"
                 onClick={openLogin}
-                className="hidden md:flex btn-secondary items-center gap-2 text-sm"
+                className="hidden md:flex btn-secondary text-sm"
                 aria-label="Log in to your Armor account"
               >
-                <LogIn size={14} aria-hidden="true" />
                 Login
               </button>
               <button
                 type="button"
                 onClick={openRegister}
-                className="hidden md:flex btn-secondary items-center gap-2 text-sm"
+                className="hidden md:flex btn-secondary text-sm"
                 aria-label="Create a new Armor account"
               >
-                <UserPlus size={14} aria-hidden="true" />
                 Open Account
               </button>
               
@@ -496,30 +495,28 @@ export default function LandingPage() {
                 ))}
               </ul>
               <div className="flex flex-col gap-2">
-                <button
-                  type="button"
-                  className="btn-secondary flex items-center justify-center gap-2 text-sm w-full"
-                  onClick={() => { setMobileNavOpen(false); openLogin() }}
-                >
-                  <LogIn size={14} aria-hidden="true" />
-                  Login
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary flex items-center justify-center gap-2 text-sm w-full"
-                  onClick={() => { setMobileNavOpen(false); openRegister() }}
-                >
-                  <UserPlus size={14} aria-hidden="true" />
-                  Open Account
-                </button>
-                <Link
+                {/* <Link
                   href="/dashboard"
                   className="btn-primary flex items-center justify-center gap-2 text-sm w-full"
                   onClick={() => setMobileNavOpen(false)}
                 >
-                  Dashboard
+                  Open Dashboard
                   <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                </Link> */}
+                <button
+                  type="button"
+                  className="btn-secondary text-sm w-full"
+                  onClick={() => { setMobileNavOpen(false); openLogin() }}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary text-sm w-full"
+                  onClick={() => { setMobileNavOpen(false); openRegister() }}
+                >
+                  Open Account
+                </button>
               </div>
             </div>
           )}
@@ -544,7 +541,7 @@ export default function LandingPage() {
 
         <div className="relative max-w-5xl mx-auto">
           {/* Badge */}
-          <div
+          {/* <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-8 fade-in-up"
             style={{
               background: 'rgba(234, 179, 8, 0.08)',
@@ -554,7 +551,7 @@ export default function LandingPage() {
           >
             <Zap size={11} />
             Professional Investment Intelligence Platform
-          </div>
+          </div> */}
 
           {/* Headline */}
           <h1
@@ -564,7 +561,7 @@ export default function LandingPage() {
           >
             Institutional-Grade
             <br />
-            <span className="gold-text">Investment Intelligence</span>
+            <span className="gold-text">Investment Intelligence Platform</span>
           </h1>
 
           {/* Subheading */}
@@ -835,12 +832,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {PLANS.map((plan) => (
               <article
                 key={plan.name}
-                aria-label={`${plan.name} plan${plan.badge ? ` — ${plan.badge}` : ''}`}
-                className="relative rounded-2xl p-7 flex flex-col gap-6 transition-all duration-300"
+                aria-label={`${plan.name} plan`}
+                className="relative rounded-2xl p-7 flex flex-col gap-6 transition-all duration-300 h-full"
                 style={
                   plan.highlight
                     ? {
@@ -1019,7 +1016,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/dashboard" className="btn-primary inline-flex items-center gap-2 px-10 py-4">
-                  Open Dashboard
+                  Dashboard
                   <ArrowRight size={16} />
                 </Link>
                 <a href="#pricing" className="btn-secondary inline-flex items-center gap-2 px-10 py-4">
@@ -1043,10 +1040,10 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm text-black"
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
               >
-                A
+                <Shield size={16} color="#000" aria-hidden="true" />
               </div>
               <span
                 className="text-lg font-bold gold-text"
@@ -1056,10 +1053,16 @@ export default function LandingPage() {
               </span>
             </div>
 
+            {/* Policy links */}
+            <div className="flex items-center gap-5 flex-wrap justify-center">
+              <Link href="/accessibility"    className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Accessibility Policy</Link>
+              <Link href="/privacy"          className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Privacy</Link>
+              <Link href="/fraud-prevention" className="text-xs transition-colors hover:text-yellow-400" style={{ color: 'var(--text-muted)' }}>Fraud Prevention</Link>
+            </div>
+
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
               © {new Date().getFullYear()} Armor Investment Management. All rights reserved.
             </p>
-
           </div>
         </div>
       </footer>
@@ -1358,14 +1361,14 @@ export default function LandingPage() {
                 <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
                   Identity verified. Opening your dashboard…
                 </p>
-                <button
+                {/* <button
                   type="button"
                   onClick={() => router.push('/dashboard')}
                   className="btn-primary w-full flex items-center justify-center gap-2"
                 >
                   Open Dashboard
                   <ArrowRight size={14} aria-hidden="true" />
-                </button>
+                </button> */}
               </div>
             )}
           </div>
@@ -1423,7 +1426,7 @@ export default function LandingPage() {
                 </div>
                 <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Account created!</p>
                 <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
-                  Welcome to Armor. You can now open the dashboard.
+                  Welcome to David Armor. You can now open the dashboard.
                 </p>
                 <div className="flex gap-3">
                   <button
@@ -1434,7 +1437,7 @@ export default function LandingPage() {
                     Close
                   </button>
                   <Link href="/dashboard" className="flex-1 btn-primary flex items-center justify-center gap-2 text-sm py-2.5">
-                    Open Dashboard <ArrowRight size={13} aria-hidden="true" />
+                    Dashboard <ArrowRight size={13} aria-hidden="true" />
                   </Link>
                 </div>
               </div>
