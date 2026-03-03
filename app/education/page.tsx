@@ -10,6 +10,12 @@ import {
   Filter, Layers, Percent,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Button } from '@/components/ui/button'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,7 +55,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#10b981',
     mockType: 'chart',
     videoDesc: 'Overview of the dashboard landing page — portfolio value card, day P&L indicator, and the real-time performance area chart.',
-    summary: `Investing means putting your money into assets — stocks, bonds, ETFs, or real estate — that have the potential to grow in value over time. Unlike keeping cash in a savings account (which barely keeps pace with inflation), investing accepts a measured level of risk in exchange for the opportunity to build meaningful wealth over the long term.\n\nThe David Armor dashboard gives you an instant snapshot of every investment you own, how much it's worth today, and whether you're ahead or behind your cost basis — making the abstract concept of "your money working for you" completely visible.`,
+    summary: `Investing means putting your money into assets — stocks, bonds, ETFs, or real estate — that have the potential to grow in value over time. Unlike keeping cash in a savings account (which barely keeps pace with inflation), investing accepts a measured level of risk in exchange for the opportunity to build meaningful wealth over the long term.\n\nThe Armor dashboard gives you an instant snapshot of every investment you own, how much it's worth today, and whether you're ahead or behind your cost basis — making the abstract concept of "your money working for you" completely visible.`,
     takeaways: [
       'Investing grows wealth beyond the rate of inflation',
       'Time in the market consistently beats trying to time the market',
@@ -89,7 +95,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#8b5cf6',
     mockType: 'form',
     videoDesc: 'Screen recording of adding a BUY transaction — selecting ticker, entering shares and price, setting the date, and watching Holdings and P&L update instantly.',
-    summary: `Every position in your portfolio is built from individual transactions. A BUY transaction increases your holding and raises your cost basis. A SELL reduces the holding and realises a gain or loss. Dividends are income events that don't affect share count but do add to your total return.\n\nTo add a transaction in David Armor: navigate to the Transactions tab, click "Add Transaction", choose the type (Buy/Sell/Dividend), enter the ticker symbol, number of shares, price per share, and date. The dashboard recalculates your portfolio metrics in real time once you save.`,
+    summary: `Every position in your portfolio is built from individual transactions. A BUY transaction increases your holding and raises your cost basis. A SELL reduces the holding and realises a gain or loss. Dividends are income events that don't affect share count but do add to your total return.\n\nTo add a transaction in Armor: navigate to the Transactions tab, click "Add Transaction", choose the type (Buy/Sell/Dividend), enter the ticker symbol, number of shares, price per share, and date. The dashboard recalculates your portfolio metrics in real time once you save.`,
     takeaways: [
       'Always enter the exact price you paid — average cost matters for P&L accuracy',
       'Sell transactions lock in realised gains or losses permanently',
@@ -109,7 +115,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#ef4444',
     mockType: 'scatter',
     videoDesc: 'Side-by-side comparison in the Security tab — Conservative vs Aggressive risk profiles, beta exposure, and how the risk level badge in the sidebar reflects your overall portfolio stance.',
-    summary: `The risk-return tradeoff is the most fundamental concept in investing: assets that offer the chance of higher returns almost always carry a higher probability of significant short-term losses. A government bond might return 4% with near-zero chance of loss. An individual tech stock might return 40% — or drop 40%.\n\nDavid Armor's Security tab shows your portfolio's overall risk level (Conservative, Moderate, or Aggressive) based on your current mix of holdings. The beta metric tells you how much your portfolio moves relative to the S&P 500: a beta of 1.2 means your portfolio tends to move 20% more than the index in either direction.`,
+    summary: `The risk-return tradeoff is the most fundamental concept in investing: assets that offer the chance of higher returns almost always carry a higher probability of significant short-term losses. A government bond might return 4% with near-zero chance of loss. An individual tech stock might return 40% — or drop 40%.\n\nArmor's Security tab shows your portfolio's overall risk level (Conservative, Moderate, or Aggressive) based on your current mix of holdings. The beta metric tells you how much your portfolio moves relative to the S&P 500: a beta of 1.2 means your portfolio tends to move 20% more than the index in either direction.`,
     takeaways: [
       'Higher expected return always comes with higher potential loss',
       'Beta > 1 means your portfolio amplifies market moves; < 1 means it cushions them',
@@ -129,7 +135,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#f59e0b',
     mockType: 'pie',
     videoDesc: 'Holdings tab walkthrough — sector allocation breakdown, how a concentrated position affects overall portfolio risk, and the effect of adding an uncorrelated asset.',
-    summary: `Diversification is the practice of spreading your investments across different assets, sectors, and geographies so that a single bad event doesn't devastate your whole portfolio. If 100% of your money is in one stock and that company goes bankrupt, you lose everything. If that stock is 5% of a 20-position portfolio, the impact is manageable.\n\nDavid Armor's Holdings tab shows your sector allocation visually — you can immediately see if you're over-concentrated in Technology or underexposed to defensive sectors like Healthcare and Consumer Staples. A well-diversified portfolio typically spans 5+ sectors with no single holding exceeding 10-15% of total value.`,
+    summary: `Diversification is the practice of spreading your investments across different assets, sectors, and geographies so that a single bad event doesn't devastate your whole portfolio. If 100% of your money is in one stock and that company goes bankrupt, you lose everything. If that stock is 5% of a 20-position portfolio, the impact is manageable.\n\nArmor's Holdings tab shows your sector allocation visually — you can immediately see if you're over-concentrated in Technology or underexposed to defensive sectors like Healthcare and Consumer Staples. A well-diversified portfolio typically spans 5+ sectors with no single holding exceeding 10-15% of total value.`,
     takeaways: [
       'No single holding should exceed 10–15% of your portfolio without a strong reason',
       'Sector diversification reduces industry-specific risk (e.g., a tech sell-off)',
@@ -151,7 +157,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#eab308',
     mockType: 'portfolio',
     videoDesc: 'Using the Analytics tab to model target allocation — comparing current vs target weights, identifying drift, and planning rebalancing trades.',
-    summary: `Strategic asset allocation sets long-term target weights for each asset class (e.g., 60% equities, 30% bonds, 10% alternatives) based on your investment goals, time horizon, and risk tolerance. You set it once and return to it periodically.\n\nTactical allocation overlays short-term adjustments on top of the strategic baseline — temporarily overweighting equities when valuations look attractive, or rotating into bonds when economic conditions deteriorate. David Armor's Analytics tab lets you compare your current allocation against any target and highlights drift — the gap between where you are and where your strategy says you should be.`,
+    summary: `Strategic asset allocation sets long-term target weights for each asset class (e.g., 60% equities, 30% bonds, 10% alternatives) based on your investment goals, time horizon, and risk tolerance. You set it once and return to it periodically.\n\nTactical allocation overlays short-term adjustments on top of the strategic baseline — temporarily overweighting equities when valuations look attractive, or rotating into bonds when economic conditions deteriorate. Armor's Analytics tab lets you compare your current allocation against any target and highlights drift — the gap between where you are and where your strategy says you should be.`,
     takeaways: [
       'Strategic allocation is about long-term goals; tactical is about short-term opportunity',
       'A 60/40 equity/bond split has historically balanced growth with stability',
@@ -231,7 +237,7 @@ const LESSONS: Lesson[] = [
     accentColor: '#ec4899',
     mockType: 'analytics',
     videoDesc: 'Full Analytics tab tour — area chart vs S&P 500 benchmark, sector attribution breakdown, alpha/beta interpretation, and how to use the date range selector to isolate specific periods.',
-    summary: `The Analytics tab is the most information-dense part of David Armor. It contains four key analytical tools:\n\n**Performance Chart** — your portfolio return plotted against a benchmark (S&P 500). The gap between the two lines is your alpha over that period.\n\n**Sector Allocation** — a breakdown of your holdings by sector. Compare this to benchmark weights to identify deliberate tilts.\n\n**Risk Metrics** — Sharpe ratio, Sortino ratio, max drawdown, and beta. These tell you whether the returns you earned were worth the risk taken.\n\n**Attribution** — which individual positions contributed most to your total return. A 20% gain in a 2% position adds less value than a 10% gain in a 15% position.`,
+    summary: `The Analytics tab is the most information-dense part of Armor. It contains four key analytical tools:\n\n**Performance Chart** — your portfolio return plotted against a benchmark (S&P 500). The gap between the two lines is your alpha over that period.\n\n**Sector Allocation** — a breakdown of your holdings by sector. Compare this to benchmark weights to identify deliberate tilts.\n\n**Risk Metrics** — Sharpe ratio, Sortino ratio, max drawdown, and beta. These tell you whether the returns you earned were worth the risk taken.\n\n**Attribution** — which individual positions contributed most to your total return. A 20% gain in a 2% position adds less value than a 10% gain in a 15% position.`,
     takeaways: [
       'Benchmark comparison reveals whether active decisions added value over passive indexing',
       'A sector overweight is only worth it if that sector\'s excess return compensates for the concentration risk',
@@ -433,7 +439,7 @@ function VideoThumbnail({ lesson, playing, onPlay }: { lesson: Lesson; playing: 
         </div>
       )}
 
-      {/* Duration badge */}
+      {/* Duration badge — kept as custom overlay since it sits inside the 16/9 thumbnail */}
       <div
         className="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md"
         style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
@@ -442,16 +448,14 @@ function VideoThumbnail({ lesson, playing, onPlay }: { lesson: Lesson; playing: 
         <span className="text-xs font-medium" style={{ color: '#f5f0e8' }}>{lesson.duration}</span>
       </div>
 
-      {/* Level badge */}
-      <div
-        className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-xs font-semibold capitalize"
-        style={{
-          background: lesson.level === 'beginner' ? 'rgba(16,185,129,0.15)' : 'rgba(234,179,8,0.15)',
-          border: `1px solid ${lesson.level === 'beginner' ? 'rgba(16,185,129,0.3)' : 'rgba(234,179,8,0.3)'}`,
-          color: lesson.level === 'beginner' ? '#10b981' : '#eab308',
-        }}
-      >
-        {lesson.level}
+      {/* Level badge overlay */}
+      <div className="absolute top-2.5 left-2.5">
+        <Badge
+          variant={lesson.level === 'beginner' ? 'profit' : 'default'}
+          className="capitalize"
+        >
+          {lesson.level}
+        </Badge>
       </div>
     </div>
   )
@@ -465,14 +469,10 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
   const Icon = lesson.icon
 
   return (
-    <article
-      className="rounded-2xl overflow-hidden flex flex-col transition-all duration-200"
-      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-    >
+    <Card className="rounded-2xl overflow-hidden flex flex-col">
       <VideoThumbnail lesson={lesson} playing={playing} onPlay={() => setPlaying(p => !p)} />
 
-      <div className="p-5 flex flex-col gap-4 flex-1">
-        {/* Header */}
+      <CardHeader className="gap-3 pb-0">
         <div className="flex items-start gap-3">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -481,34 +481,30 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
             <Icon size={16} style={{ color: lesson.accentColor }} aria-hidden="true" />
           </div>
           <div>
-            <h3 className="font-semibold text-base leading-snug" style={{ color: 'var(--text-primary)' }}>
-              {lesson.title}
-            </h3>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{lesson.subtitle}</p>
+            <CardTitle className="text-base leading-snug">{lesson.title}</CardTitle>
+            <CardDescription className="text-xs mt-0.5">{lesson.subtitle}</CardDescription>
           </div>
         </div>
+      </CardHeader>
 
+      <CardContent className="flex flex-col gap-4 pt-4 flex-1">
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
           {lesson.tags.map(tag => (
-            <span
-              key={tag}
-              className="px-2 py-0.5 rounded-full text-xs capitalize"
-              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
-            >
+            <Badge key={tag} variant="outline" className="capitalize rounded-full text-xs">
               {tag}
-            </span>
+            </Badge>
           ))}
         </div>
 
         {/* Screen recording description */}
         <div className="px-3 py-2 rounded-xl text-xs leading-relaxed" style={{ background: 'rgba(234,179,8,0.05)', border: '1px solid rgba(234,179,8,0.1)', color: 'var(--text-muted)' }}>
-          <span className="font-medium" style={{ color: '#eab308' }}>📹 Recording: </span>
+          <span className="font-medium" style={{ color: '#eab308' }}>Recording: </span>
           {lesson.videoDesc}
         </div>
 
-        {/* Summary */}
-        <div>
+        {/* Summary — collapsible for long content */}
+        <Collapsible open={expanded} onOpenChange={setExpanded}>
           <p
             className="text-sm leading-relaxed"
             style={{
@@ -524,15 +520,19 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
             ))}
           </p>
           {lesson.summary.length > 200 && (
-            <button
-              onClick={() => setExpanded(e => !e)}
-              className="flex items-center gap-1 text-xs mt-2 transition-colors"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              {expanded ? <><ChevronUp size={12}/> Show less</> : <><ChevronDown size={12}/> Read more</>}
-            </button>
+            <>
+              <CollapsibleContent />
+              <CollapsibleTrigger asChild>
+                <button
+                  className="flex items-center gap-1 text-xs mt-2 transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  {expanded ? <><ChevronUp size={12}/> Show less</> : <><ChevronDown size={12}/> Read more</>}
+                </button>
+              </CollapsibleTrigger>
+            </>
           )}
-        </div>
+        </Collapsible>
 
         {/* Key takeaways */}
         <div>
@@ -548,8 +548,8 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
             ))}
           </ul>
         </div>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -595,7 +595,7 @@ export default function EducationPage() {
           }}
         >
           <div className="max-w-7xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
-            <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
+            <Link href="/" className="flex items-center gap-3" aria-label="Back to Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -604,7 +604,7 @@ export default function EducationPage() {
                 <Shield size={16} color="#000" />
               </div>
               <span className="text-lg font-bold gold-text" style={{ fontFamily: 'var(--font-display)' }}>
-                David Armor
+                Armor
               </span>
             </Link>
 
@@ -616,20 +616,16 @@ export default function EducationPage() {
 
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Log in to your Armor account"
-              >
-                Login
-              </Link>
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Open a new Armor account"
-              >
-                Open Account
-              </Link>
+              <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
+                <Link href="/" aria-label="Log in to your Armor account">
+                  Login
+                </Link>
+              </Button>
+              <Button size="sm" asChild className="hidden md:inline-flex">
+                <Link href="/" aria-label="Open a new Armor account">
+                  Open Account
+                </Link>
+              </Button>
             </div>
           </div>
         </nav>
@@ -647,7 +643,7 @@ export default function EducationPage() {
             style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: '#eab308' }}
           >
             <BookOpen size={11} aria-hidden="true" />
-            David Armor Education Hub
+            Armor Education Hub
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Learn to Invest <span className="gold-text">Smarter</span>
@@ -659,15 +655,19 @@ export default function EducationPage() {
 
           {/* Search */}
           <div className="relative max-w-lg mx-auto">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
-            <input
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"
+              style={{ color: 'var(--text-muted)' }}
+              aria-hidden="true"
+            />
+            <Input
               type="search"
               placeholder="Search lessons…"
               value={search}
               onChange={e => setSearch(e.target.value)}
               aria-label="Search lessons"
-              className="w-full pl-11 pr-10 py-3 rounded-xl text-sm outline-none transition-colors"
-              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              className="pl-9 pr-10"
             />
             {search && (
               <button
@@ -685,24 +685,27 @@ export default function EducationPage() {
 
       {/* ── Filters + Stats ── */}
       <div className="max-w-7xl mx-auto px-6 pb-6">
-        {/* Filter chips */}
-        <div className="flex items-center gap-2 flex-wrap mb-6" role="group" aria-label="Filter lessons">
+        {/* Filter toggle group */}
+        <div className="flex items-center gap-2 flex-wrap mb-6">
           <Filter size={14} style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
-          {FILTERS.map(f => (
-            <button
-              key={f.id}
-              onClick={() => setActiveFilter(f.id)}
-              aria-pressed={activeFilter === f.id}
-              className="px-4 py-1.5 rounded-full text-xs font-medium transition-all"
-              style={{
-                background: activeFilter === f.id ? 'linear-gradient(135deg, #eab308, #ca8a04)' : 'var(--bg-card)',
-                border: activeFilter === f.id ? 'none' : '1px solid var(--border)',
-                color: activeFilter === f.id ? '#000' : 'var(--text-secondary)',
-              }}
-            >
-              {f.label}
-            </button>
-          ))}
+          <ToggleGroup
+            type="single"
+            value={activeFilter}
+            onValueChange={val => { if (val) setActiveFilter(val as Tag | 'all') }}
+            aria-label="Filter lessons"
+            className="flex-wrap justify-start gap-2"
+          >
+            {FILTERS.map(f => (
+              <ToggleGroupItem
+                key={f.id}
+                value={f.id}
+                aria-label={f.label}
+                className="px-4 py-1.5 rounded-full text-xs font-medium h-auto"
+              >
+                {f.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </div>
 
         {/* Stats strip */}
@@ -724,9 +727,9 @@ export default function EducationPage() {
           ))}
           {filtered.length !== LESSONS.length && (
             <div className="ml-auto">
-              <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)', color: '#eab308' }}>
+              <Badge variant="default" className="text-xs">
                 Showing {filtered.length} of {LESSONS.length}
-              </span>
+              </Badge>
             </div>
           )}
         </div>
@@ -737,9 +740,14 @@ export default function EducationPage() {
             <BookOpen size={40} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
             <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>No lessons found</p>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Try a different search term or filter.</p>
-            <button onClick={() => { setSearch(''); setActiveFilter('all') }} className="mt-4 btn-secondary text-sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setSearch(''); setActiveFilter('all') }}
+              className="mt-4"
+            >
               Clear filters
-            </button>
+            </Button>
           </div>
         )}
 
@@ -756,12 +764,11 @@ export default function EducationPage() {
                   No prior knowledge needed — build your foundation step by step
                 </p>
               </div>
-              <span
-                className="ml-auto text-xs px-3 py-1 rounded-full"
-                style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981' }}
-              >
-                {beginnerLessons.length} lesson{beginnerLessons.length !== 1 ? 's' : ''}
-              </span>
+              <div className="ml-auto">
+                <Badge variant="profit">
+                  {beginnerLessons.length} lesson{beginnerLessons.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {beginnerLessons.map(l => <LessonCard key={l.id} lesson={l} />)}
@@ -782,12 +789,11 @@ export default function EducationPage() {
                   Professional techniques for experienced investors and analysts
                 </p>
               </div>
-              <span
-                className="ml-auto text-xs px-3 py-1 rounded-full"
-                style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)', color: '#eab308' }}
-              >
-                {advancedLessons.length} lesson{advancedLessons.length !== 1 ? 's' : ''}
-              </span>
+              <div className="ml-auto">
+                <Badge variant="default">
+                  {advancedLessons.length} lesson{advancedLessons.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {advancedLessons.map(l => <LessonCard key={l.id} lesson={l} />)}
@@ -812,12 +818,14 @@ export default function EducationPage() {
             Ready to apply what you learned?
           </h2>
           <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
-            Open the David Armor dashboard and put these concepts to work with your real portfolio data.
+            Open the Armor dashboard and put these concepts to work with your real portfolio data.
           </p>
-          <Link href="/dashboard" className="btn-primary inline-flex items-center gap-2 px-8 py-3">
-            Open Dashboard
-            <ChevronRight size={15} aria-hidden="true" />
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/dashboard">
+              Open Dashboard
+              <ChevronRight size={15} aria-hidden="true" />
+            </Link>
+          </Button>
         </div>
       </section>
 
@@ -829,7 +837,7 @@ export default function EducationPage() {
         style={{ borderTop: '1px solid var(--border)' }}
       >
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="David Armor home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Armor home">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -837,10 +845,10 @@ export default function EducationPage() {
             >
               <Shield size={14} color="#000" />
             </div>
-            <span className="text-base font-bold gold-text" style={{ fontFamily: 'var(--font-display)' }}>David Armor</span>
+            <span className="text-base font-bold gold-text" style={{ fontFamily: 'var(--font-display)' }}>Armor</span>
           </Link>
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} David Armor Investment Management. Educational content is for informational purposes only.
+            © {new Date().getFullYear()} Armor Investment Management. Educational content is for informational purposes only.
           </p>
         </div>
       </footer>

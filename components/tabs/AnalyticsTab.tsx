@@ -6,6 +6,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, Legend
 } from 'recharts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 interface AnalyticsTabProps {
   holdings: any[]
@@ -104,155 +106,176 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
       {/* Risk metrics */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
         {metrics.map((m, i) => (
-          <div key={i} className="glass-card p-4 text-center">
-            <div
-              className={`font-mono text-xl font-semibold mb-1 ${
-                m.positive ? 'text-emerald-400' : m.positive === false ? 'text-red-400' : ''
-              }`}
-              style={m.neutral ? { color: 'var(--text-primary)' } : {}}
-            >
-              {m.value}
-            </div>
-            <div className="text-xs font-medium mb-0.5" style={{ color: 'var(--text-secondary)' }}>{m.label}</div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{m.description}</div>
-          </div>
+          <Card key={i}>
+            <CardContent className="p-4 text-center">
+              <div
+                className={`font-mono text-xl font-semibold mb-1 ${
+                  m.positive ? 'text-emerald-400' : m.positive === false ? 'text-red-400' : ''
+                }`}
+                style={m.neutral ? { color: 'var(--text-primary)' } : {}}
+              >
+                {m.value}
+              </div>
+              <div className="text-xs font-medium mb-0.5" style={{ color: 'var(--text-secondary)' }}>{m.label}</div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{m.description}</div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Period selector + Performance chart */}
-      <div className="glass-card p-5">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Performance vs Benchmark
-          </h2>
-          <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-            {PERIOD_OPTIONS.map(p => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all"
-                style={{
-                  background: period === p ? 'rgba(234,179,8,0.15)' : 'transparent',
-                  color: period === p ? '#eab308' : 'var(--text-muted)',
-                  border: period === p ? '1px solid rgba(234,179,8,0.25)' : '1px solid transparent',
-                }}
-              >
-                {p}
-              </button>
-            ))}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Performance vs Benchmark
+            </h2>
+            <div
+              className="flex items-center gap-1 p-1 rounded-lg"
+              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
+            >
+              {PERIOD_OPTIONS.map(p => (
+                <Button
+                  key={p}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPeriod(p)}
+                  className="px-3 py-1.5 h-auto text-xs font-mono font-medium transition-all"
+                  style={
+                    period === p
+                      ? { background: 'rgba(234,179,8,0.15)', color: '#eab308', border: '1px solid rgba(234,179,8,0.25)' }
+                      : { background: 'transparent', color: 'var(--text-muted)', border: '1px solid transparent' }
+                  }
+                >
+                  {p}
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart data={sliced} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-            <defs>
-              <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#eab308" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
-            <XAxis
-              dataKey="date"
-              tickFormatter={(v) => {
-                const d = new Date(v)
-                return period === '1W' || period === '1M'
-                  ? `${d.getMonth() + 1}/${d.getDate()}`
-                  : new Date(v).toLocaleString('default', { month: 'short' })
-              }}
-              tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
-              tickLine={false} axisLine={false}
-            />
-            <YAxis
-              tickFormatter={(v) => formatCurrency(v, true)}
-              tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
-              tickLine={false} axisLine={false} width={72}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="value" stroke="#eab308" strokeWidth={1.5} fill="url(#portfolioGrad)" name="Portfolio" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={sliced} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
+              <defs>
+                <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#eab308" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(v) => {
+                  const d = new Date(v)
+                  return period === '1W' || period === '1M'
+                    ? `${d.getMonth() + 1}/${d.getDate()}`
+                    : new Date(v).toLocaleString('default', { month: 'short' })
+                }}
+                tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                tickLine={false} axisLine={false}
+              />
+              <YAxis
+                tickFormatter={(v) => formatCurrency(v, true)}
+                tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                tickLine={false} axisLine={false} width={72}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="value" stroke="#eab308" strokeWidth={1.5} fill="url(#portfolioGrad)" name="Portfolio" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       {/* Bottom row: Monthly returns + Sector pie + Radar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Monthly returns bar chart */}
-        <div className="glass-card p-5 lg:col-span-1">
-          <h2 className="font-display text-base font-semibold mb-5" style={{ color: 'var(--text-primary)' }}>
-            Monthly Returns
-          </h2>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={monthlyChart} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
-              <XAxis dataKey="month" tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={v => `$${(Math.abs(v) / 1000).toFixed(0)}k`} />
-              <Tooltip
-                formatter={(v: any) => formatCurrency(Math.abs(v), true)}
-                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-              />
-              <Bar dataKey="gain" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="loss" fill="#ef4444" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Card className="lg:col-span-1">
+          <CardHeader className="pb-0 px-5 pt-5">
+            <CardTitle className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Monthly Returns
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-5 pb-5 pt-5">
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={monthlyChart} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
+                <XAxis dataKey="month" tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={v => `$${(Math.abs(v) / 1000).toFixed(0)}k`} />
+                <Tooltip
+                  formatter={(v: any) => formatCurrency(Math.abs(v), true)}
+                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
+                />
+                <Bar dataKey="gain" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="loss" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* Sector Pie */}
-        <div className="glass-card p-5">
-          <h2 className="font-display text-base font-semibold mb-5" style={{ color: 'var(--text-primary)' }}>
-            Sector Allocation
-          </h2>
-          <div className="flex items-center justify-center">
-            <PieChart width={160} height={160}>
-              <Pie data={pieData} cx={80} cy={80} innerRadius={50} outerRadius={75} paddingAngle={2} dataKey="value">
-                {pieData.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} stroke="transparent" />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(v: any) => formatCurrency(v, true)}
-                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-              />
-            </PieChart>
-          </div>
-          <div className="space-y-2 mt-2">
-            {pieData.slice(0, 5).map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ background: item.color }} />
-                  <span style={{ color: 'var(--text-secondary)' }}>{item.name}</span>
-                </span>
-                <span className="font-mono" style={{ color: 'var(--text-primary)' }}>{item.pct}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="pb-0 px-5 pt-5">
+            <CardTitle className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Sector Allocation
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-5 pb-5 pt-5">
+            <div className="flex items-center justify-center">
+              <PieChart width={160} height={160}>
+                <Pie data={pieData} cx={80} cy={80} innerRadius={50} outerRadius={75} paddingAngle={2} dataKey="value">
+                  {pieData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} stroke="transparent" />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(v: any) => formatCurrency(v, true)}
+                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
+                />
+              </PieChart>
+            </div>
+            <div className="space-y-2 mt-2">
+              {pieData.slice(0, 5).map((item, i) => (
+                <div key={i} className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ background: item.color }} />
+                    <span style={{ color: 'var(--text-secondary)' }}>{item.name}</span>
+                  </span>
+                  <span className="font-mono" style={{ color: 'var(--text-primary)' }}>{item.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Portfolio characteristics radar */}
-        <div className="glass-card p-5">
-          <h2 className="font-display text-base font-semibold mb-5" style={{ color: 'var(--text-primary)' }}>
-            Portfolio Profile
-          </h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <RadarChart data={radarData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-              <PolarGrid stroke="rgba(234,179,8,0.1)" />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
-              <Radar name="Portfolio" dataKey="value" stroke="#eab308" fill="#eab308" fillOpacity={0.15} strokeWidth={1.5} />
-            </RadarChart>
-          </ResponsiveContainer>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            {radarData.map((r, i) => (
-              <div key={i} className="flex items-center justify-between text-xs">
-                <span style={{ color: 'var(--text-muted)' }}>{r.subject}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-12 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                    <div className="h-full rounded-full" style={{ width: `${r.value}%`, background: '#eab308' }} />
+        <Card>
+          <CardHeader className="pb-0 px-5 pt-5">
+            <CardTitle className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Portfolio Profile
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-5 pb-5 pt-5">
+            <ResponsiveContainer width="100%" height={200}>
+              <RadarChart data={radarData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+                <PolarGrid stroke="rgba(234,179,8,0.1)" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
+                <Radar name="Portfolio" dataKey="value" stroke="#eab308" fill="#eab308" fillOpacity={0.15} strokeWidth={1.5} />
+              </RadarChart>
+            </ResponsiveContainer>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {radarData.map((r, i) => (
+                <div key={i} className="flex items-center justify-between text-xs">
+                  <span style={{ color: 'var(--text-muted)' }}>{r.subject}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                      <div className="h-full rounded-full" style={{ width: `${r.value}%`, background: '#eab308' }} />
+                    </div>
+                    <span className="font-mono w-6 text-right" style={{ color: 'var(--text-secondary)' }}>{r.value}</span>
                   </div>
-                  <span className="font-mono w-6 text-right" style={{ color: 'var(--text-secondary)' }}>{r.value}</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

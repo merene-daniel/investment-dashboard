@@ -9,6 +9,11 @@ import {
   Mail,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -178,7 +183,7 @@ export default function SecurityPage() {
           }}
         >
           <div className="max-w-5xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
-            <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
+            <Link href="/" className="flex items-center gap-3" aria-label="Back to Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -190,7 +195,7 @@ export default function SecurityPage() {
                 className="text-lg font-bold gold-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                David Armor
+                Armor
               </span>
             </Link>
 
@@ -202,20 +207,16 @@ export default function SecurityPage() {
 
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Log in to your Armor account"
-              >
-                Login
-              </Link>
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Open a new Armor account"
-              >
-                Open Account
-              </Link>
+              <Button variant="outline" size="sm" asChild className="hidden md:flex">
+                <Link href="/" aria-label="Log in to your Armor account">
+                  Login
+                </Link>
+              </Button>
+              <Button size="sm" asChild className="hidden md:flex">
+                <Link href="/" aria-label="Open a new Armor account">
+                  Open Account
+                </Link>
+              </Button>
             </div>
           </div>
         </nav>
@@ -235,8 +236,9 @@ export default function SecurityPage() {
 
         <div className="relative max-w-3xl mx-auto">
           {/* Badge */}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8"
+          <Badge
+            variant="outline"
+            className="mb-8 gap-2 px-4 py-1.5 rounded-full text-xs font-medium"
             style={{
               background: 'rgba(234,179,8,0.08)',
               border:     '1px solid rgba(234,179,8,0.22)',
@@ -245,7 +247,7 @@ export default function SecurityPage() {
           >
             <Shield size={12} aria-hidden="true" />
             Security &amp; Trust Centre
-          </div>
+          </Badge>
 
           <h1
             id="security-hero-heading"
@@ -260,7 +262,7 @@ export default function SecurityPage() {
             className="text-lg max-w-2xl mx-auto leading-relaxed mb-12"
             style={{ color: 'var(--text-secondary)' }}
           >
-            David Armor applies institutional-grade security practices to protect every portfolio,
+            Armor applies institutional-grade security practices to protect every portfolio,
             transaction, and piece of financial data you entrust to us.
           </p>
 
@@ -303,9 +305,9 @@ export default function SecurityPage() {
             {PILLARS.map(p => {
               const Icon = p.icon
               return (
-                <div
+                <Card
                   key={p.title}
-                  className="glass-card p-6 flex flex-col gap-4"
+                  className="p-6 flex flex-col gap-4 border-0"
                 >
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center"
@@ -321,7 +323,7 @@ export default function SecurityPage() {
                       {p.description}
                     </p>
                   </div>
-                </div>
+                </Card>
               )
             })}
           </div>
@@ -355,58 +357,68 @@ export default function SecurityPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* In Transit */}
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
-                >
-                  <Globe2 size={15} style={{ color: '#eab308' }} aria-hidden="true" />
+            <Card className="border-0">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
+                  >
+                    <Globe2 size={15} style={{ color: '#eab308' }} aria-hidden="true" />
+                  </div>
+                  <CardTitle className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                    In Transit
+                  </CardTitle>
                 </div>
-                <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                  In Transit
-                </h3>
-              </div>
-              <ul className="space-y-3">
-                {ENCRYPTION_IN_TRANSIT.map(row => (
-                  <li key={row.label} className="flex flex-col gap-0.5">
-                    <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
-                      {row.label}
-                    </span>
-                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      {row.value}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              </CardHeader>
+              <Separator style={{ background: 'rgba(234,179,8,0.1)' }} />
+              <CardContent className="pt-4">
+                <ul className="space-y-3">
+                  {ENCRYPTION_IN_TRANSIT.map(row => (
+                    <li key={row.label} className="flex flex-col gap-0.5">
+                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+                        {row.label}
+                      </span>
+                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {row.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
 
             {/* At Rest */}
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
-                >
-                  <Database size={15} style={{ color: '#eab308' }} aria-hidden="true" />
+            <Card className="border-0">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
+                  >
+                    <Database size={15} style={{ color: '#eab308' }} aria-hidden="true" />
+                  </div>
+                  <CardTitle className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                    At Rest
+                  </CardTitle>
                 </div>
-                <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                  At Rest
-                </h3>
-              </div>
-              <ul className="space-y-3">
-                {ENCRYPTION_AT_REST.map(row => (
-                  <li key={row.label} className="flex flex-col gap-0.5">
-                    <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
-                      {row.label}
-                    </span>
-                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      {row.value}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              </CardHeader>
+              <Separator style={{ background: 'rgba(234,179,8,0.1)' }} />
+              <CardContent className="pt-4">
+                <ul className="space-y-3">
+                  {ENCRYPTION_AT_REST.map(row => (
+                    <li key={row.label} className="flex flex-col gap-0.5">
+                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+                        {row.label}
+                      </span>
+                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {row.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -432,48 +444,54 @@ export default function SecurityPage() {
             Built to Meet the Highest Standards
           </h2>
           <p className="mb-10 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-            David Armor is independently audited and designed to meet regulatory requirements across
+            Armor is independently audited and designed to meet regulatory requirements across
             the US and EU, so your data is protected by law as well as technology.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {COMPLIANCE.map(item => (
-              <article
+              <Card
                 key={item.badge}
-                className="glass-card p-6"
+                className="border-0"
                 aria-label={`${item.badge} compliance details`}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span
-                    className="text-xs font-mono font-bold px-2.5 py-1 rounded-full"
-                    style={{
-                      background: `${item.color}15`,
-                      color:      item.color,
-                      border:     `1px solid ${item.color}30`,
-                    }}
-                  >
-                    {item.badge}
-                  </span>
-                  <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                    {item.title}
-                  </h3>
-                </div>
-                <ul className="space-y-2">
-                  {item.points.map((pt, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <CheckCircle
-                        size={13}
-                        className="mt-0.5 flex-shrink-0"
-                        style={{ color: item.color }}
-                        aria-hidden="true"
-                      />
-                      <span className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                        {pt}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <Badge
+                      variant="outline"
+                      className="text-xs font-mono font-bold px-2.5 py-1 rounded-full"
+                      style={{
+                        background: `${item.color}15`,
+                        color:      item.color,
+                        border:     `1px solid ${item.color}30`,
+                      }}
+                    >
+                      {item.badge}
+                    </Badge>
+                    <CardTitle className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                      {item.title}
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <Separator style={{ background: 'rgba(234,179,8,0.08)' }} />
+                <CardContent className="pt-4">
+                  <ul className="space-y-2">
+                    {item.points.map((pt, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle
+                          size={13}
+                          className="mt-0.5 flex-shrink-0"
+                          style={{ color: item.color }}
+                          aria-hidden="true"
+                        />
+                        <span className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                          {pt}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
@@ -506,49 +524,59 @@ export default function SecurityPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* What we collect */}
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-sm mb-4" style={{ color: 'var(--text-primary)' }}>
-                What we collect
-              </h3>
-              <ul className="space-y-2.5">
-                {PRIVACY_COLLECT.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <CheckCircle
-                      size={13}
-                      className="mt-0.5 flex-shrink-0"
-                      style={{ color: '#3b82f6' }}
-                      aria-hidden="true"
-                    />
-                    <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Card className="border-0">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                  What we collect
+                </CardTitle>
+              </CardHeader>
+              <Separator style={{ background: 'rgba(59,130,246,0.15)' }} />
+              <CardContent className="pt-4">
+                <ul className="space-y-2.5">
+                  {PRIVACY_COLLECT.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <CheckCircle
+                        size={13}
+                        className="mt-0.5 flex-shrink-0"
+                        style={{ color: '#3b82f6' }}
+                        aria-hidden="true"
+                      />
+                      <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
 
             {/* What we never do */}
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-sm mb-4" style={{ color: 'var(--text-primary)' }}>
-                What we will <em>never</em> do
-              </h3>
-              <ul className="space-y-2.5">
-                {PRIVACY_NEVER.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <div
-                      className="mt-0.5 flex-shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' }}
-                      aria-hidden="true"
-                    >
-                      <span style={{ color: '#ef4444', fontSize: '9px', fontWeight: 700, lineHeight: 1 }}>✕</span>
-                    </div>
-                    <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Card className="border-0">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                  What we will <em>never</em> do
+                </CardTitle>
+              </CardHeader>
+              <Separator style={{ background: 'rgba(239,68,68,0.15)' }} />
+              <CardContent className="pt-4">
+                <ul className="space-y-2.5">
+                  {PRIVACY_NEVER.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <div
+                        className="mt-0.5 flex-shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center"
+                        style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' }}
+                        aria-hidden="true"
+                      >
+                        <span style={{ color: '#ef4444', fontSize: '9px', fontWeight: 700, lineHeight: 1 }}>✕</span>
+                      </div>
+                      <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -579,10 +607,10 @@ export default function SecurityPage() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {DATA_HANDLING.map((item, i) => {
+            {DATA_HANDLING.map((item) => {
               const Icon = item.icon
               return (
-                <div key={item.title} className="glass-card p-5 flex flex-col gap-3">
+                <Card key={item.title} className="p-5 flex flex-col gap-3 border-0">
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -597,7 +625,7 @@ export default function SecurityPage() {
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {item.description}
                   </p>
-                </div>
+                </Card>
               )
             })}
           </div>
@@ -611,54 +639,58 @@ export default function SecurityPage() {
         style={{ borderTop: '1px solid rgba(234,179,8,0.07)' }}
       >
         <div className="max-w-5xl mx-auto">
-          <div className="glass-card glow-gold p-8 md:p-10 relative overflow-hidden">
+          <Card className="glow-gold border-0 relative overflow-hidden">
             <div
               className="absolute inset-0 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at top left, rgba(234,179,8,0.05) 0%, transparent 60%)' }}
               aria-hidden="true"
             />
-            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <CardContent className="relative pt-8 pb-8 px-8 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
               {/* Left: disclosure program */}
               <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
-                  >
-                    <AlertTriangle size={18} style={{ color: '#eab308' }} aria-hidden="true" />
+                <Alert variant="gold" className="mb-6 border-0 bg-transparent p-0 [&>svg]:static [&>svg]:translate-y-0 [&>svg~*]:pl-0">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
+                    >
+                      <AlertTriangle size={18} style={{ color: '#eab308' }} aria-hidden="true" />
+                    </div>
+                    <AlertTitle
+                      id="disclosure-heading"
+                      className="text-xl font-bold m-0"
+                      style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+                    >
+                      Responsible Disclosure
+                    </AlertTitle>
                   </div>
-                  <h2
-                    id="disclosure-heading"
-                    className="text-xl font-bold"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-                  >
-                    Responsible Disclosure
-                  </h2>
-                </div>
-                <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
-                  Found a vulnerability? We welcome responsible disclosure from the security
-                  community and commit to a collaborative, no-legal-action process for
-                  good-faith researchers.
-                </p>
-                <ul className="space-y-2">
-                  {[
-                    '90-day coordinated disclosure window',
-                    'Acknowledgement within 48 hours',
-                    'No legal action against good-faith researchers',
-                    'CVE credit and Hall-of-Fame listing for verified reports',
-                  ].map((pt, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      <CheckCircle
-                        size={13}
-                        className="mt-0.5 flex-shrink-0"
-                        style={{ color: '#eab308' }}
-                        aria-hidden="true"
-                      />
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
+                  <AlertDescription>
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+                      Found a vulnerability? We welcome responsible disclosure from the security
+                      community and commit to a collaborative, no-legal-action process for
+                      good-faith researchers.
+                    </p>
+                    <ul className="space-y-2">
+                      {[
+                        '90-day coordinated disclosure window',
+                        'Acknowledgement within 48 hours',
+                        'No legal action against good-faith researchers',
+                        'CVE credit and Hall-of-Fame listing for verified reports',
+                      ].map((pt, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                          <CheckCircle
+                            size={13}
+                            className="mt-0.5 flex-shrink-0"
+                            style={{ color: '#eab308' }}
+                            aria-hidden="true"
+                          />
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
               </div>
 
               {/* Right: contact */}
@@ -689,13 +721,13 @@ export default function SecurityPage() {
                   }}
                 >
                   <strong style={{ color: 'var(--text-secondary)' }}>Out-of-scope:</strong>{' '}
-                  denial-of-service attacks, social engineering of David Armor staff, vulnerabilities
+                  denial-of-service attacks, social engineering of Armor staff, vulnerabilities
                   in third-party services we do not control, and reports generated by automated
                   scanners without a meaningful proof-of-concept.
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -706,7 +738,7 @@ export default function SecurityPage() {
         style={{ borderTop: '1px solid rgba(234,179,8,0.07)' }}
       >
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="David Armor home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Armor home">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -715,12 +747,12 @@ export default function SecurityPage() {
               <Shield size={14} color="#000" />
             </div>
             <span className="text-base font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-              David Armor
+              Armor
             </span>
           </Link>
 
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} David Armor Investment Management. All rights reserved.
+            © {new Date().getFullYear()} Armor Investment Management. All rights reserved.
           </p>
 
         </div>

@@ -8,6 +8,11 @@ import {
   CheckCircle, ExternalLink, Mail, Linkedin,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -15,7 +20,7 @@ const MILESTONES = [
   {
     year: '2019',
     title: 'Founded',
-    description: 'David Armor was founded by a team of ex-Goldman Sachs engineers and quant analysts frustrated with the lack of institutional-grade tools for independent investors.',
+    description: 'Armor was founded by a team of ex-Goldman Sachs engineers and quant analysts frustrated with the lack of institutional-grade tools for independent investors.',
   },
   {
     year: '2021',
@@ -81,7 +86,7 @@ const MISSION_VALUES = [
 
 const TEAM = [
   {
-    name: 'David Armor',
+    name: 'Armor',
     role: 'CEO & Co-founder',
     bio: 'Former VP of Engineering at Goldman Sachs. 12 years in quantitative finance and high-frequency trading systems. CFA charterholder.',
     initials: 'DA',
@@ -123,7 +128,7 @@ const TEAM = [
   {
     name: 'Lena Kovač',
     role: 'Head of Data Science',
-    bio: 'Quantitative researcher with a PhD in Financial Mathematics from ETH Zurich. Designed David Armor\'s risk models and benchmark analysis engine.',
+    bio: 'Quantitative researcher with a PhD in Financial Mathematics from ETH Zurich. Designed Armor\'s risk models and benchmark analysis engine.',
     initials: 'LK',
     color: 'var(--accent-amber)',
     tintBg: 'rgba(245,158,11,0.08)',
@@ -182,7 +187,7 @@ export default function AboutPage() {
           }}
         >
           <div className="max-w-5xl mx-auto px-6 py-4 grid grid-cols-3 items-center">
-            <Link href="/" className="flex items-center gap-3" aria-label="Back to David Armor home">
+            <Link href="/" className="flex items-center gap-3" aria-label="Back to Armor home">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -194,7 +199,7 @@ export default function AboutPage() {
                 className="text-lg font-bold gold-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                David Armor
+                Armor
               </span>
             </Link>
 
@@ -206,20 +211,16 @@ export default function AboutPage() {
 
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle />
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Log in to your Armor account"
-              >
-                Login
-              </Link>
-              <Link
-                href="/"
-                className="hidden md:flex btn-secondary text-sm"
-                aria-label="Open a new Armor account"
-              >
-                Open Account
-              </Link>
+              <Button variant="outline" size="sm" asChild className="hidden md:flex">
+                <Link href="/" aria-label="Log in to your Armor account">
+                  Login
+                </Link>
+              </Button>
+              <Button size="sm" asChild className="hidden md:flex">
+                <Link href="/" aria-label="Open a new Armor account">
+                  Open Account
+                </Link>
+              </Button>
             </div>
           </div>
         </nav>
@@ -237,8 +238,9 @@ export default function AboutPage() {
         />
 
         <div className="relative max-w-3xl mx-auto">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8"
+          <Badge
+            variant="outline"
+            className="mb-8 gap-2 px-4 py-1.5 rounded-full text-xs font-medium"
             style={{
               background: 'rgba(234,179,8,0.08)',
               border:     '1px solid rgba(234,179,8,0.22)',
@@ -246,8 +248,8 @@ export default function AboutPage() {
             }}
           >
             <Building2 size={12} aria-hidden="true" />
-            About David Armor
-          </div>
+            About Armor
+          </Badge>
 
           <h1
             id="about-hero-heading"
@@ -262,9 +264,9 @@ export default function AboutPage() {
             className="text-lg max-w-2xl mx-auto leading-relaxed mb-12"
             style={{ color: 'var(--text-secondary)' }}
           >
-            David Armor Financial Platform was born from the experience of market adversity and the conviction that independent investors should never be left at a disadvantage.
+            Armor Financial Platform was born from the experience of market adversity and the conviction that independent investors should never be left at a disadvantage.
 
-          After David Armor has witnessed the impact of his heavy financial losses and bankruptcies, he and his company have committed to building a platform that delivers fair, balanced, and ethical institutional-grade portfolio tools — without the institutional price tag. Help him God!
+          After Armor has witnessed the impact of his heavy financial losses and bankruptcies, he and his company have committed to building a platform that delivers fair, balanced, and ethical institutional-grade portfolio tools — without the institutional price tag. Help him God!
           </p>
 
           {/* Quick stats row */}
@@ -305,7 +307,7 @@ export default function AboutPage() {
           </h2>
           <p className="max-w-2xl mb-14" style={{ color: 'var(--text-secondary)' }}>
             From a side project between two engineers to a platform trusted by over 10,000 investors
-            across 40 countries — this is how David Armor grew.
+            across 40 countries — this is how Armor grew.
           </p>
 
           {/* Timeline */}
@@ -375,8 +377,8 @@ export default function AboutPage() {
           </h2>
 
           {/* Mission statement callout */}
-          <blockquote
-            className="glass-card p-8 mb-12 relative overflow-hidden"
+          <Card
+            className="p-8 mb-12 relative overflow-hidden"
             style={{ borderLeft: '3px solid #eab308' }}
           >
             <div
@@ -384,25 +386,27 @@ export default function AboutPage() {
               style={{ background: 'radial-gradient(ellipse at left, rgba(234,179,8,0.04) 0%, transparent 60%)' }}
               aria-hidden="true"
             />
-            <p
-              className="relative text-xl md:text-2xl font-light leading-relaxed italic"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-            >
-              &ldquo;Our mission is to give every independent investor — from the first-time saver to the
-              seasoned private investor — the data, analytics, and security that were once available only to
-              Wall Street trading desks.&rdquo;
-            </p>
-            <footer className="relative mt-4 text-sm" style={{ color: 'var(--text-muted)' }}>
-              — Alexandra Mercer, CEO &amp; Co-founder
-            </footer>
-          </blockquote>
+            <blockquote>
+              <p
+                className="relative text-xl md:text-2xl font-light leading-relaxed italic"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+              >
+                &ldquo;Our mission is to give every independent investor — from the first-time saver to the
+                seasoned private investor — the data, analytics, and security that were once available only to
+                Wall Street trading desks.&rdquo;
+              </p>
+              <footer className="relative mt-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+                — Alexandra Mercer, CEO &amp; Co-founder
+              </footer>
+            </blockquote>
+          </Card>
 
           {/* Values grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {MISSION_VALUES.map(v => {
               const Icon = v.icon
               return (
-                <div key={v.title} className="glass-card p-6 flex gap-4">
+                <Card key={v.title} className="p-6 flex gap-4 border-0">
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: v.tintBg, border: `1px solid ${v.tintBorder}` }}
@@ -417,7 +421,7 @@ export default function AboutPage() {
                       {v.description}
                     </p>
                   </div>
-                </div>
+                </Card>
               )
             })}
           </div>
@@ -463,9 +467,9 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {SECURITY_HIGHLIGHTS.map(item => (
-              <div
+              <Card
                 key={item.label}
-                className="flex items-start gap-3 p-5 rounded-xl"
+                className="flex items-start gap-3 p-5 border-0"
                 style={{
                   background: 'rgba(16,185,129,0.05)',
                   border:     '1px solid rgba(16,185,129,0.15)',
@@ -485,7 +489,7 @@ export default function AboutPage() {
                     {item.description}
                   </p>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -544,24 +548,28 @@ export default function AboutPage() {
           {/* Team cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {TEAM.map(member => (
-              <article
+              <Card
                 key={member.name}
-                className="glass-card p-6 flex flex-col gap-4"
+                className="p-6 flex flex-col gap-4 border-0"
                 aria-label={`${member.name}, ${member.role}`}
               >
                 {/* Avatar + name */}
                 <div className="flex items-center gap-3">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0"
+                  <Avatar
+                    className="w-12 h-12 rounded-xl flex-shrink-0"
                     style={{
                       background: `${member.color}18`,
                       border:     `1px solid ${member.color}30`,
-                      color:      member.color,
                     }}
                     aria-hidden="true"
                   >
-                    {member.initials}
-                  </div>
+                    <AvatarFallback
+                      className="rounded-xl text-sm font-bold bg-transparent"
+                      style={{ color: member.color }}
+                    >
+                      {member.initials}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <h3 className="text-sm font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
                       {member.name}
@@ -572,6 +580,8 @@ export default function AboutPage() {
                   </div>
                 </div>
 
+                <Separator style={{ background: 'rgba(234,179,8,0.1)' }} />
+
                 {/* Bio */}
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                   {member.bio}
@@ -580,8 +590,9 @@ export default function AboutPage() {
                 {/* Credentials */}
                 <div className="flex flex-wrap gap-1.5 mt-auto">
                   {member.credentials.map(cred => (
-                    <span
+                    <Badge
                       key={cred}
+                      variant="outline"
                       className="text-xs px-2 py-0.5 rounded-full font-mono"
                       style={{
                         background: 'rgba(234,179,8,0.07)',
@@ -590,10 +601,10 @@ export default function AboutPage() {
                       }}
                     >
                       {cred}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
-              </article>
+              </Card>
             ))}
           </div>
         </div>
@@ -606,7 +617,7 @@ export default function AboutPage() {
         style={{ borderTop: '1px solid rgba(234,179,8,0.07)' }}
       >
         <div className="max-w-5xl mx-auto">
-          <div className="glass-card glow-gold p-10 md:p-14 text-center relative overflow-hidden">
+          <Card className="glow-gold p-10 md:p-14 text-center relative overflow-hidden">
             <div
               className="absolute inset-0 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(234,179,8,0.07) 0%, transparent 60%)' }}
@@ -622,18 +633,16 @@ export default function AboutPage() {
                 <span className="gold-text">like a pro?</span>
               </h2>
               <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                Join 10,000+ investors who trust David Armor to manage and grow their wealth with
+                Join 10,000+ investors who trust Armor to manage and grow their wealth with
                 data-driven precision.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  href="/dashboard"
-                  className="btn-primary flex items-center gap-2"
-                  aria-label="Open your investment dashboard"
-                >
-                  Dashboard
-                  <ChevronRight size={16} aria-hidden="true" />
-                </Link>
+                <Button asChild aria-label="Open your investment dashboard">
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    Dashboard
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </Link>
+                </Button>
                 <a
                   href="mailto:hello@aurum.app"
                   className="flex items-center gap-2 text-sm transition-colors hover:text-yellow-400"
@@ -644,7 +653,7 @@ export default function AboutPage() {
                 </a>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </section>
 
@@ -655,7 +664,7 @@ export default function AboutPage() {
         style={{ borderTop: '1px solid rgba(234,179,8,0.07)' }}
       >
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5" aria-label="David Armor home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Armor home">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
@@ -664,12 +673,12 @@ export default function AboutPage() {
               <Shield size={14} color="#000" />
             </div>
             <span className="text-base font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-              David Armor
+              Armor
             </span>
           </Link>
 
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} David Armor Investment Management. All rights reserved.
+            © {new Date().getFullYear()} Armor Investment Management. All rights reserved.
           </p>
 
         </div>

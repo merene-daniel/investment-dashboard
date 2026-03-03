@@ -11,6 +11,15 @@ import {
   UserPlus, LogIn, Mail, Smartphone,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 
 const FEATURES = [
   {
@@ -403,7 +412,7 @@ export default function LandingPage() {
                 className="text-xl font-bold tracking-wide gold-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                David Armor
+                Armor
               </span>
             </Link>
 
@@ -426,100 +435,65 @@ export default function LandingPage() {
             <div className="flex items-center gap-3">
               <ThemeToggle />
               {/* Hamburger — mobile only */}
-              <button
-                type="button"
-                className="md:hidden p-2 rounded-lg"
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
                 onClick={() => setMobileNavOpen(!mobileNavOpen)}
                 aria-expanded={mobileNavOpen}
                 aria-controls="mobile-nav"
                 aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
               >
                 {mobileNavOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
-              </button>
-              {/* <Link
-                href="/dashboard"
-                className="hidden md:flex btn-primary items-center gap-2 text-sm"
-                aria-label="Open the investment dashboard"
-              >
-                Open Dashboard
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link> */}
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="outline"
+                className="hidden md:flex"
                 onClick={openLogin}
-                className="hidden md:flex btn-secondary text-sm"
                 aria-label="Log in to your Armor account"
               >
                 Login
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                className="hidden md:flex"
                 onClick={openRegister}
-                className="hidden md:flex btn-secondary text-sm"
                 aria-label="Create a new Armor account"
               >
                 Open Account
-              </button>
-              
+              </Button>
+
             </div>
           </div>
 
-          {/* Mobile nav dropdown */}
-          {mobileNavOpen && (
-            <div
-              id="mobile-nav"
-              role="navigation"
-              aria-label="Mobile navigation"
-              className="mobile-nav-open md:hidden px-4 pb-4"
-              style={{
-                background: 'rgba(13,13,10,0.97)',
-                backdropFilter: 'blur(24px)',
-                borderTop: '1px solid rgba(234,179,8,0.1)',
-              }}
-            >
-              <ul className="flex flex-col gap-1 pt-3 list-none mb-3" role="list">
-                {NAV_LINKS.map((item) => (
-                  <li key={item.label}>
-                    <a
-                      href={item.href}
-                      className="block px-4 py-3 rounded-xl text-sm font-medium transition-colors"
-                      style={{ color: 'var(--text-secondary)' }}
-                      onClick={() => setMobileNavOpen(false)}
-                      onFocus={e => (e.currentTarget.style.color = 'var(--text-primary)')}
-                      onBlur={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-col gap-2">
-                {/* <Link
-                  href="/dashboard"
-                  className="btn-primary flex items-center justify-center gap-2 text-sm w-full"
-                  onClick={() => setMobileNavOpen(false)}
-                >
-                  Open Dashboard
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link> */}
-                <button
-                  type="button"
-                  className="btn-secondary text-sm w-full"
-                  onClick={() => { setMobileNavOpen(false); openLogin() }}
-                >
-                  Login
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary text-sm w-full"
-                  onClick={() => { setMobileNavOpen(false); openRegister() }}
-                >
-                  Open Account
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Mobile nav — Sheet */}
+          <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+            <SheetContent side="left" className="w-72 flex flex-col gap-6 p-6">
+              <nav id="mobile-nav" aria-label="Mobile navigation">
+                <ul className="flex flex-col gap-1 list-none mb-4" role="list">
+                  {NAV_LINKS.map((item) => (
+                    <li key={item.label}>
+                      <a
+                        href={item.href}
+                        className="block px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:text-yellow-400"
+                        style={{ color: 'var(--text-secondary)' }}
+                        onClick={() => setMobileNavOpen(false)}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-col gap-2">
+                  <Button variant="outline" className="w-full" onClick={() => { setMobileNavOpen(false); openLogin() }}>
+                    Login
+                  </Button>
+                  <Button className="w-full" onClick={() => { setMobileNavOpen(false); openRegister() }}>
+                    Open Account
+                  </Button>
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </nav>
       </header>
 
@@ -575,20 +549,24 @@ export default function LandingPage() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 fade-in-up stagger-3">
-            <Link href="/dashboard" className="btn-primary flex items-center gap-2 px-8 py-3">
-              Dashboard
-              <ArrowRight size={15} />
-            </Link>
-            <a href="#pricing" className="btn-secondary flex items-center gap-2 px-8 py-3">
-              View Pricing
-              <ChevronRight size={15} />
-            </a>
+            <Button asChild size="lg" className="gap-2 px-8">
+              <Link href="/dashboard">
+                Dashboard
+                <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button variant="outline" asChild size="lg" className="gap-2 px-8">
+              <a href="#pricing">
+                View Pricing
+                <ChevronRight size={15} aria-hidden="true" />
+              </a>
+            </Button>
           </div>
 
           {/* Stats strip */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto fade-in-up stagger-4">
             {STATS.map((stat) => (
-              <div key={stat.label} className="glass-card p-5 text-center">
+              <Card key={stat.label} className="p-5 text-center">
                 <div
                   className="text-2xl font-bold mb-1 gold-text"
                   style={{ fontFamily: 'var(--font-mono)' }}
@@ -598,7 +576,7 @@ export default function LandingPage() {
                 <div className="text-xs tracking-wide" style={{ color: 'var(--text-muted)' }}>
                   {stat.label}
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -638,7 +616,7 @@ export default function LandingPage() {
             {FEATURES.map((feature) => {
               const Icon = feature.icon
               return (
-                <div key={feature.title} className="glass-card p-6 group transition-all duration-300">
+                <Card key={feature.title} className="p-6 group transition-all duration-300">
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
                     style={{
@@ -654,7 +632,7 @@ export default function LandingPage() {
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {feature.description}
                   </p>
-                </div>
+                </Card>
               )
             })}
           </div>
@@ -751,43 +729,34 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map((t) => (
-              <div
-                key={t.name}
-                className="glass-card p-7 flex flex-col gap-5 group transition-all duration-300"
-              >
+              <Card key={t.name} className="p-7 flex flex-col gap-5">
                 {/* Stars */}
                 <div className="flex gap-1">
                   {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      fill="#eab308"
-                      style={{ color: '#eab308' }}
-                    />
+                    <Star key={i} size={14} fill="#eab308" style={{ color: '#eab308' }} />
                   ))}
                 </div>
 
                 {/* Quote */}
-                <p
-                  className="text-sm leading-relaxed flex-1"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
+                <p className="text-sm leading-relaxed flex-1" style={{ color: 'var(--text-secondary)' }}>
                   "{t.quote}"
                 </p>
 
                 {/* Author */}
                 <div className="flex items-center gap-3 pt-2" style={{ borderTop: '1px solid rgba(234,179,8,0.08)' }}>
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-                    style={{
-                      background: `${t.avatarColor}18`,
-                      border: `1px solid ${t.avatarColor}35`,
-                      color: t.avatarColor,
-                      fontFamily: 'var(--font-mono)',
-                    }}
-                  >
-                    {t.initials}
-                  </div>
+                  <Avatar className="w-10 h-10 shrink-0">
+                    <AvatarFallback
+                      className="text-sm font-bold"
+                      style={{
+                        background: `${t.avatarColor}18`,
+                        border: `1px solid ${t.avatarColor}35`,
+                        color: t.avatarColor,
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      {t.initials}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                       {t.name}
@@ -797,7 +766,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -834,19 +803,17 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {PLANS.map((plan) => (
-              <article
+              <Card
                 key={plan.name}
                 aria-label={`${plan.name} plan`}
-                className="relative rounded-2xl p-7 flex flex-col gap-6 transition-all duration-300 h-full"
+                className="relative p-7 flex flex-col gap-6 h-full"
                 style={
                   plan.highlight
                     ? {
-                        background: 'var(--bg-card)',
                         border: '1px solid rgba(234, 179, 8, 0.4)',
                         boxShadow: '0 0 40px rgba(234,179,8,0.1), 0 0 80px rgba(234,179,8,0.04)',
                       }
                     : {
-                        background: 'var(--bg-card)',
                         border: '1px solid rgba(234, 179, 8, 0.1)',
                       }
                 }
@@ -894,7 +861,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Divider */}
-                <div style={{ height: '1px', background: 'rgba(234,179,8,0.08)' }} />
+                <Separator />
 
                 {/* Features list */}
                 <ul className="flex flex-col gap-3 flex-1">
@@ -918,14 +885,15 @@ export default function LandingPage() {
                 </ul>
 
                 {/* CTA */}
-                <Link
-                  href={plan.href}
-                  className={plan.highlight ? 'btn-primary text-center text-sm py-3' : 'btn-secondary text-center text-sm py-3'}
+                <Button
+                  asChild
+                  variant={plan.highlight ? 'default' : 'outline'}
+                  className="w-full"
                   aria-label={`${plan.cta} — ${plan.name} plan`}
                 >
-                  {plan.cta}
-                </Link>
-              </article>
+                  <Link href={plan.href}>{plan.cta}</Link>
+                </Button>
+              </Card>
             ))}
           </div>
         </div>
@@ -958,11 +926,7 @@ export default function LandingPage() {
             ].map((item) => {
               const Icon = item.icon
               return (
-                <div
-                  key={item.title}
-                  className="flex gap-4 p-5 rounded-xl"
-                  style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.08)' }}
-                >
+                <Card key={item.title} className="flex gap-4 p-5" style={{ border: '1px solid rgba(234,179,8,0.15)' }}>
                   <div
                     className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
                     style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}
@@ -977,7 +941,7 @@ export default function LandingPage() {
                       {item.description}
                     </p>
                   </div>
-                </div>
+                </Card>
               )
             })}
           </div>
@@ -987,7 +951,7 @@ export default function LandingPage() {
       {/* ── CTA Banner ── */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="glass-card glow-gold p-12 md:p-16 text-center relative overflow-hidden">
+          <Card className="glow-gold p-12 md:p-16 text-center relative overflow-hidden">
             <div
               className="absolute inset-0 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.06) 0%, transparent 70%)' }}
@@ -1015,17 +979,21 @@ export default function LandingPage() {
                 portfolio management and performance analytics.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/dashboard" className="btn-primary inline-flex items-center gap-2 px-10 py-4">
-                  Dashboard
-                  <ArrowRight size={16} />
-                </Link>
-                <a href="#pricing" className="btn-secondary inline-flex items-center gap-2 px-10 py-4">
-                  View Pricing
-                  <ChevronRight size={16} />
-                </a>
+                {/* <Button asChild size="lg" className="gap-2 px-10 py-4">
+                  <Link href="/dashboard">
+                    Dashboard
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                </Button> */}
+                <Button variant="outline" asChild size="lg" className="gap-2 px-10 py-4">
+                  <a href="#pricing">
+                    View Pricing
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </a>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </section>
 
@@ -1068,29 +1036,9 @@ export default function LandingPage() {
       </footer>
 
       {/* ── Login Modal ── */}
-      {loginOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setLoginOpen(false) }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="login-title"
-        >
-          <div
-            className="w-full max-w-md rounded-2xl p-7 relative"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            {/* Close */}
-            <button
-              type="button"
-              onClick={() => setLoginOpen(false)}
-              aria-label="Close login form"
-              className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors"
-              style={{ color: 'var(--text-muted)', background: 'transparent' }}
-            >
-              <X size={18} aria-hidden="true" />
-            </button>
+      <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
+        <DialogContent className="max-w-md p-7">
+          <DialogTitle className="sr-only">Login</DialogTitle>
 
             {/* ── Step: credentials ── */}
             {loginStep === 'credentials' && (
@@ -1123,35 +1071,31 @@ export default function LandingPage() {
                 </div>
 
                 <form onSubmit={handleLoginCredentials} noValidate className="flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="login-id" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="login-id" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                       Email or Username
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="login-id"
                       type="text"
                       autoComplete="username"
                       placeholder="you@example.com or username"
                       value={loginForm.identifier}
                       onChange={e => setLoginForm(f => ({ ...f, identifier: e.target.value }))}
-                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     />
                   </div>
 
-                  <div>
-                    <label htmlFor="login-pw" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="login-pw" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                       Password
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="login-pw"
                       type="password"
                       autoComplete="current-password"
                       placeholder="Your password"
                       value={loginForm.password}
                       onChange={e => setLoginForm(f => ({ ...f, password: e.target.value }))}
-                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     />
                   </div>
 
@@ -1161,17 +1105,12 @@ export default function LandingPage() {
                     </p>
                   )}
 
-                  <button
-                    type="submit"
-                    disabled={loginLoading}
-                    className="btn-primary w-full flex items-center justify-center gap-2 mt-1"
-                    style={{ opacity: loginLoading ? 0.7 : 1 }}
-                  >
+                  <Button type="submit" disabled={loginLoading} className="w-full gap-2 mt-1">
                     {loginLoading
                       ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
                       : <LogIn size={14} aria-hidden="true" />}
                     {loginLoading ? 'Verifying…' : 'Login'}
-                  </button>
+                  </Button>
 
                   <p className="text-center text-xs" style={{ color: 'var(--text-muted)' }}>
                     Leave both fields empty to enter as guest
@@ -1222,11 +1161,11 @@ export default function LandingPage() {
                   </div>
 
                   {/* Target input */}
-                  <div>
-                    <label htmlFor="mfa-target" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="mfa-target" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                       {mfaMethod === 'email' ? 'Email address' : 'Phone number'}
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="mfa-target"
                       type={mfaMethod === 'email' ? 'email' : 'tel'}
                       autoComplete={mfaMethod === 'email' ? 'email' : 'tel'}
@@ -1234,8 +1173,6 @@ export default function LandingPage() {
                       value={mfaTarget}
                       onChange={e => setMfaTarget(e.target.value)}
                       required
-                      className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     />
                   </div>
 
@@ -1245,21 +1182,16 @@ export default function LandingPage() {
                     </p>
                   )}
 
-                  <button
-                    type="submit"
-                    disabled={loginLoading}
-                    className="btn-primary w-full flex items-center justify-center gap-2"
-                    style={{ opacity: loginLoading ? 0.7 : 1 }}
-                  >
+                  <Button type="submit" disabled={loginLoading} className="w-full gap-2">
                     {loginLoading
                       ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
                       : <Shield size={14} aria-hidden="true" />}
                     {loginLoading ? 'Sending code…' : 'Send Verification Code'}
-                  </button>
+                  </Button>
 
-                  <button type="button" onClick={() => { setLoginStep('credentials'); setLoginError('') }} className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => { setLoginStep('credentials'); setLoginError('') }} className="text-xs mx-auto" style={{ color: 'var(--text-muted)' }}>
                     ← Back
-                  </button>
+                  </Button>
                 </form>
               </>
             )}
@@ -1297,11 +1229,11 @@ export default function LandingPage() {
                 )}
 
                 <form onSubmit={handleMfaVerify} noValidate className="flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="mfa-code-input" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="mfa-code-input" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                       Verification Code
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="mfa-code-input"
                       type="text"
                       inputMode="numeric"
@@ -1311,8 +1243,7 @@ export default function LandingPage() {
                       value={mfaCode}
                       onChange={e => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       required
-                      className="w-full rounded-xl px-4 py-3 text-xl font-mono text-center outline-none tracking-widest transition-colors"
-                      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                      className="text-xl font-mono text-center tracking-widest py-3"
                     />
                   </div>
 
@@ -1322,26 +1253,27 @@ export default function LandingPage() {
                     </p>
                   )}
 
-                  <button
+                  <Button
                     type="submit"
                     disabled={loginLoading || mfaCode.length !== 6}
-                    className="btn-primary w-full flex items-center justify-center gap-2"
-                    style={{ opacity: (loginLoading || mfaCode.length !== 6) ? 0.6 : 1 }}
+                    className="w-full gap-2"
                   >
                     {loginLoading
                       ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
                       : <Check size={14} aria-hidden="true" />}
                     {loginLoading ? 'Verifying…' : 'Verify Code'}
-                  </button>
+                  </Button>
 
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => { setLoginStep('mfa-method'); setLoginError(''); setMfaDemoCode('') }}
-                    className="text-xs text-center"
+                    className="text-xs mx-auto"
                     style={{ color: 'var(--text-muted)' }}
                   >
                     ← Resend or change method
-                  </button>
+                  </Button>
                 </form>
               </>
             )}
@@ -1361,44 +1293,15 @@ export default function LandingPage() {
                 <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
                   Identity verified. Opening your dashboard…
                 </p>
-                {/* <button
-                  type="button"
-                  onClick={() => router.push('/dashboard')}
-                  className="btn-primary w-full flex items-center justify-center gap-2"
-                >
-                  Open Dashboard
-                  <ArrowRight size={14} aria-hidden="true" />
-                </button> */}
               </div>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* ── Registration Modal ── */}
-      {registerOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setRegisterOpen(false) }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="register-title"
-        >
-          <div
-            className="w-full max-w-md rounded-2xl p-7 relative"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            {/* Close */}
-            <button
-              type="button"
-              onClick={() => setRegisterOpen(false)}
-              aria-label="Close registration form"
-              className="absolute top-4 right-4 p-1.5 rounded-lg transition-colors"
-              style={{ color: 'var(--text-muted)', background: 'transparent' }}
-            >
-              <X size={18} aria-hidden="true" />
-            </button>
+      <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
+        <DialogContent className="max-w-md p-7">
+          <DialogTitle className="sr-only">Open Account</DialogTitle>
 
             {/* Header */}
             <div className="mb-6">
@@ -1426,29 +1329,27 @@ export default function LandingPage() {
                 </div>
                 <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Account created!</p>
                 <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
-                  Welcome to David Armor. You can now open the dashboard.
+                  Welcome to Armor. You can now open the dashboard.
                 </p>
                 <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setRegisterOpen(false)}
-                    className="flex-1 btn-secondary text-sm py-2.5"
-                  >
+                  <Button variant="outline" className="flex-1" onClick={() => setRegisterOpen(false)}>
                     Close
-                  </button>
-                  <Link href="/dashboard" className="flex-1 btn-primary flex items-center justify-center gap-2 text-sm py-2.5">
-                    Dashboard <ArrowRight size={13} aria-hidden="true" />
-                  </Link>
+                  </Button>
+                  <Button asChild className="flex-1 gap-2">
+                    <Link href="/dashboard">
+                      Dashboard <ArrowRight size={13} aria-hidden="true" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
             ) : (
               <form onSubmit={handleRegister} noValidate className="flex flex-col gap-4">
                 {/* Email */}
-                <div>
-                  <label htmlFor="reg-email" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="reg-email" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Email Address
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="reg-email"
                     type="email"
                     autoComplete="email"
@@ -1456,21 +1357,15 @@ export default function LandingPage() {
                     placeholder="you@example.com"
                     value={registerForm.email}
                     onChange={e => setRegisterForm(f => ({ ...f, email: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      border: '1px solid var(--border)',
-                      color: 'var(--text-primary)',
-                    }}
                   />
                 </div>
 
                 {/* Username */}
-                <div>
-                  <label htmlFor="reg-username" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="reg-username" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Username
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="reg-username"
                     type="text"
                     autoComplete="username"
@@ -1478,21 +1373,15 @@ export default function LandingPage() {
                     placeholder="e.g. john_doe"
                     value={registerForm.username}
                     onChange={e => setRegisterForm(f => ({ ...f, username: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      border: '1px solid var(--border)',
-                      color: 'var(--text-primary)',
-                    }}
                   />
                 </div>
 
                 {/* Password */}
-                <div>
-                  <label htmlFor="reg-password" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="reg-password" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Password
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="reg-password"
                     type="password"
                     autoComplete="new-password"
@@ -1500,21 +1389,15 @@ export default function LandingPage() {
                     placeholder="Minimum 8 characters"
                     value={registerForm.password}
                     onChange={e => setRegisterForm(f => ({ ...f, password: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      border: '1px solid var(--border)',
-                      color: 'var(--text-primary)',
-                    }}
                   />
                 </div>
 
                 {/* Confirm Password */}
-                <div>
-                  <label htmlFor="reg-confirm" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="reg-confirm" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Confirm Password
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="reg-confirm"
                     type="password"
                     autoComplete="new-password"
@@ -1522,35 +1405,25 @@ export default function LandingPage() {
                     placeholder="Repeat your password"
                     value={registerForm.confirmPassword}
                     onChange={e => setRegisterForm(f => ({ ...f, confirmPassword: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      border: '1px solid var(--border)',
-                      color: 'var(--text-primary)',
-                    }}
                   />
                 </div>
 
                 {/* Country */}
-                <div>
-                  <label htmlFor="reg-country" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="reg-country" className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Country
-                  </label>
+                  </Label>
                   <select
                     id="reg-country"
                     required
                     value={registerForm.country}
                     onChange={e => setRegisterForm(f => ({ ...f, country: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      border: '1px solid var(--border)',
-                      color: registerForm.country ? 'var(--text-primary)' : 'var(--text-muted)',
-                    }}
+                    className="h-10 w-full rounded-md border border-border bg-input px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    style={{ color: registerForm.country ? 'var(--text-primary)' : 'var(--text-muted)' }}
                   >
                     <option value="" disabled>Select your country</option>
                     {COUNTRIES.map(c => (
-                      <option key={c} value={c} style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>{c}</option>
+                      <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
                 </div>
@@ -1563,24 +1436,18 @@ export default function LandingPage() {
                 )}
 
                 {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={registerLoading}
-                  className="btn-primary w-full flex items-center justify-center gap-2 mt-1"
-                  style={{ opacity: registerLoading ? 0.7 : 1 }}
-                >
+                <Button type="submit" disabled={registerLoading} className="w-full gap-2 mt-1">
                   {registerLoading ? (
                     <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
                   ) : (
                     <UserPlus size={14} aria-hidden="true" />
                   )}
                   {registerLoading ? 'Creating account…' : 'Create Account'}
-                </button>
+                </Button>
               </form>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
     </main>
   )

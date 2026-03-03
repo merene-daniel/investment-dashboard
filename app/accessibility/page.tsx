@@ -7,6 +7,9 @@ import {
   AlertCircle, Mail,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 
 const LAST_UPDATED = 'March 2026'
 
@@ -115,10 +118,9 @@ export default function AccessibilityPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.05) 0%, transparent 65%)' }} />
         <div className="relative max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6"
-            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
+          <Badge variant="outline" className="mb-6 gap-2 px-4 py-2 rounded-full text-xs font-medium" style={{ background: 'rgba(234,179,8,0.08)', borderColor: 'rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
             <Eye size={11} aria-hidden="true" /> Accessibility Policy
-          </div>
+          </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Built for <span className="gold-text">Everyone</span>
           </h1>
@@ -143,22 +145,26 @@ export default function AccessibilityPage() {
             {STANDARDS.map(s => {
               const Icon = s.icon
               return (
-                <div key={s.title} className="rounded-2xl p-5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.tintBg, border: `1px solid ${s.tintBorder}` }}>
-                      <Icon size={16} style={{ color: s.color }} aria-hidden="true" />
+                <Card key={s.title} className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.tintBg, border: `1px solid ${s.tintBorder}` }}>
+                        <Icon size={16} style={{ color: s.color }} aria-hidden="true" />
+                      </div>
+                      <CardTitle style={{ color: 'var(--text-primary)' }}>{s.title}</CardTitle>
                     </div>
-                    <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{s.title}</h3>
-                  </div>
-                  <ul className="flex flex-col gap-2">
-                    {s.items.map(item => (
-                      <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        <CheckCircle size={13} className="flex-shrink-0 mt-0.5" style={{ color: s.color }} aria-hidden="true" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="flex flex-col gap-2">
+                      {s.items.map(item => (
+                        <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                          <CheckCircle size={13} className="flex-shrink-0 mt-0.5" style={{ color: s.color }} aria-hidden="true" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
@@ -173,15 +179,17 @@ export default function AccessibilityPage() {
             {FEATURES.map(f => {
               const Icon = f.icon
               return (
-                <div key={f.title} className="flex items-start gap-4 p-5 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)' }}>
-                    <Icon size={16} style={{ color: 'var(--gold)' }} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
-                  </div>
-                </div>
+                <Card key={f.title} className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                  <CardContent className="flex items-start gap-4 p-5">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)' }}>
+                      <Icon size={16} style={{ color: 'var(--gold)' }} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
+                    </div>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
@@ -197,47 +205,51 @@ export default function AccessibilityPage() {
           </p>
           <div className="flex flex-col gap-3">
             {LIMITATIONS.map(l => (
-              <div key={l.area} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-                <AlertCircle size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--loss)' }} aria-hidden="true" />
-                <div>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{l.area}: </span>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{l.detail}</span>
-                </div>
-              </div>
+              <Alert key={l.area} variant="destructive" className="rounded-xl">
+                <AlertCircle size={15} aria-hidden="true" />
+                <AlertTitle>{l.area}</AlertTitle>
+                <AlertDescription style={{ color: 'var(--text-secondary)' }}>{l.detail}</AlertDescription>
+              </Alert>
             ))}
           </div>
         </section>
 
         {/* ── Testing ── */}
-        <section aria-labelledby="testing-heading" className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <h2 id="testing-heading" className="text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-            How We Test
-          </h2>
-          <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-            Accessibility testing at Armor uses a combination of automated scanning (Axe, Lighthouse) and manual testing with screen readers (VoiceOver on macOS/iOS, NVDA on Windows) and keyboard-only navigation. We conduct accessibility audits with every major release cycle.
-          </p>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            User feedback is our most valuable signal. If you encounter a barrier that isn't listed here, please let us know so we can address it in the next release.
-          </p>
-        </section>
+        <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+          <CardHeader>
+            <CardTitle as="h2" id="testing-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+              How We Test
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 pt-0">
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Accessibility testing at Armor uses a combination of automated scanning (Axe, Lighthouse) and manual testing with screen readers (VoiceOver on macOS/iOS, NVDA on Windows) and keyboard-only navigation. We conduct accessibility audits with every major release cycle.
+            </p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              User feedback is our most valuable signal. If you encounter a barrier that isn't listed here, please let us know so we can address it in the next release.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* ── Contact ── */}
-        <section aria-labelledby="contact-heading" className="rounded-2xl p-6 text-center" style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.15)' }}>
-          <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
-          <h2 id="contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-            Report an Accessibility Issue
-          </h2>
-          <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-            If you experience any difficulty accessing content or functionality on Armor, please contact our accessibility team. We aim to respond within 2 business days.
-          </p>
-          <a
-            href="mailto:accessibility@armor-invest.com"
-            className="btn-primary inline-flex items-center gap-2 text-sm"
-          >
-            <Mail size={14} aria-hidden="true" />
-            accessibility@armor-invest.com
-          </a>
-        </section>
+        <Card className="rounded-2xl text-center" style={{ background: 'rgba(234,179,8,0.04)', borderColor: 'rgba(234,179,8,0.15)' }}>
+          <CardContent className="p-6">
+            <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
+            <h2 id="contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+              Report an Accessibility Issue
+            </h2>
+            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+              If you experience any difficulty accessing content or functionality on Armor, please contact our accessibility team. We aim to respond within 2 business days.
+            </p>
+            <a
+              href="mailto:accessibility@armor-invest.com"
+              className="btn-primary inline-flex items-center gap-2 text-sm"
+            >
+              <Mail size={14} aria-hidden="true" />
+              accessibility@armor-invest.com
+            </a>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Footer ── */}

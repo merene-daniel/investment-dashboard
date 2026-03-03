@@ -5,6 +5,9 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts'
 import { TrendingUp, TrendingDown, DollarSign, Activity, PieChart } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 
 interface OverviewTabProps {
   portfolio: any
@@ -25,31 +28,33 @@ const SECTOR_COLORS: Record<string, string> = {
 
 function StatCard({ title, value, sub, subValue, icon: Icon, color = '#eab308', delay = 0 }: any) {
   return (
-    <div
-      className="glass-card p-5 fade-in-up"
+    <Card
+      className="fade-in-up"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center"
-          style={{ background: `${color}15`, border: `1px solid ${color}30` }}
-        >
-          <Icon size={16} style={{ color }} />
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between mb-3">
+          <div
+            className="w-9 h-9 rounded-lg flex items-center justify-center"
+            style={{ background: `${color}15`, border: `1px solid ${color}30` }}
+          >
+            <Icon size={16} style={{ color }} />
+          </div>
+          <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+            {title}
+          </span>
         </div>
-        <span className="text-xs font-mono" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-          {title}
-        </span>
-      </div>
-      <div className="font-mono text-2xl font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-        {value}
-      </div>
-      {sub && (
-        <div className={`text-xs flex items-center gap-1 ${getPnLClass(parseFloat(subValue || '0'))}`}>
-          {parseFloat(subValue || '0') >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-          <span>{sub}</span>
+        <div className="font-mono text-2xl font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+          {value}
         </div>
-      )}
-    </div>
+        {sub && (
+          <div className={`text-xs flex items-center gap-1 ${getPnLClass(parseFloat(subValue || '0'))}`}>
+            {parseFloat(subValue || '0') >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+            <span>{sub}</span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -137,22 +142,23 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
       {/* Main chart + Sector allocation */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Performance Chart */}
-        <div className="lg:col-span-2 glass-card p-5 fade-in-up" style={{ animationDelay: '100ms' }}>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-              Portfolio Performance
-            </h2>
-            <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5">
-                <div className="w-6 h-0.5 rounded" style={{ background: '#eab308' }} />
-                <span style={{ color: 'var(--text-muted)' }}>Portfolio</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <div className="w-6 h-0.5 rounded opacity-50" style={{ background: '#3b82f6', borderStyle: 'dashed' }} />
-                <span style={{ color: 'var(--text-muted)' }}>Benchmark</span>
-              </span>
+        <Card className="lg:col-span-2 fade-in-up" style={{ animationDelay: '100ms' }}>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle>Portfolio Performance</CardTitle>
+              <div className="flex items-center gap-3 text-xs">
+                <span className="flex items-center gap-1.5">
+                  <div className="w-6 h-0.5 rounded" style={{ background: '#eab308' }} />
+                  <span style={{ color: 'var(--text-muted)' }}>Portfolio</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <div className="w-6 h-0.5 rounded opacity-50" style={{ background: '#3b82f6', borderStyle: 'dashed' }} />
+                  <span style={{ color: 'var(--text-muted)' }}>Benchmark</span>
+                </span>
+              </div>
             </div>
-          </div>
+          </CardHeader>
+          <CardContent>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
               <defs>
@@ -195,13 +201,15 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Sector Allocation */}
-        <div className="glass-card p-5 fade-in-up" style={{ animationDelay: '200ms' }}>
-          <h2 className="font-display text-base font-semibold mb-5" style={{ color: 'var(--text-primary)' }}>
-            Sector Allocation
-          </h2>
+        <Card className="fade-in-up" style={{ animationDelay: '200ms' }}>
+          <CardHeader>
+            <CardTitle>Sector Allocation</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
           <div className="space-y-3">
             {Object.entries(sectorMap)
               .sort((a, b) => b[1] - a[1])
@@ -226,31 +234,30 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
                 )
               })}
           </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Top Holdings + Recent Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Top Holdings */}
-        <div className="glass-card overflow-hidden fade-in-up" style={{ animationDelay: '300ms' }}>
-          <div className="p-5 pb-3">
-            <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-              Top Holdings
-            </h2>
-          </div>
-          <table className="w-full data-table">
-            <thead>
-              <tr>
-                <th className="text-left">Symbol</th>
-                <th className="text-right">Value</th>
-                <th className="text-right">P&L</th>
-                <th className="text-right">Weight</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Card className="overflow-hidden fade-in-up" style={{ animationDelay: '300ms' }}>
+          <CardHeader className="pb-3">
+            <CardTitle>Top Holdings</CardTitle>
+          </CardHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Symbol</TableHead>
+                <TableHead className="text-right">Value</TableHead>
+                <TableHead className="text-right">P&L</TableHead>
+                <TableHead className="text-right">Weight</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {topHoldings.map((h) => (
-                <tr key={h._id}>
-                  <td>
+                <TableRow key={h._id}>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <div
                         className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
@@ -267,14 +274,14 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="text-right font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
                     {formatCurrency(h.marketValue, true)}
-                  </td>
-                  <td className={`text-right font-mono text-xs ${getPnLClass(h.unrealizedPnL)}`}>
+                  </TableCell>
+                  <TableCell className={`text-right font-mono text-xs ${getPnLClass(h.unrealizedPnL)}`}>
                     {formatPercent(h.unrealizedPnLPercent)}
-                  </td>
-                  <td className="text-right">
+                  </TableCell>
+                  <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <div className="w-12 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
                         <div
@@ -286,71 +293,59 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
                         {h.weight?.toFixed(1)}%
                       </span>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
 
         {/* Recent Transactions */}
-        <div className="glass-card overflow-hidden fade-in-up" style={{ animationDelay: '400ms' }}>
-          <div className="p-5 pb-3">
-            <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-              Recent Activity
-            </h2>
-          </div>
-          <table className="w-full data-table">
-            <thead>
-              <tr>
-                <th className="text-left">Type</th>
-                <th className="text-left">Asset</th>
-                <th className="text-right">Amount</th>
-                <th className="text-right">Date</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Card className="overflow-hidden fade-in-up" style={{ animationDelay: '400ms' }}>
+          <CardHeader className="pb-3">
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Type</TableHead>
+                <TableHead className="text-left">Asset</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {transactions.slice(0, 6).map((tx) => {
-                const typeColors: Record<string, string> = {
-                  BUY: '#10b981',
-                  SELL: '#ef4444',
-                  DIVIDEND: '#eab308',
-                  DEPOSIT: '#8b5cf6',
-                  WITHDRAWAL: '#f97316',
-                }
-                const color = typeColors[tx.type] || '#6b7280'
+                const badgeVariant = tx.type === 'BUY'
+                  ? 'profit'
+                  : tx.type === 'SELL'
+                  ? 'loss'
+                  : 'default'
                 return (
-                  <tr key={tx._id}>
-                    <td>
-                      <span
-                        className="text-xs px-2 py-0.5 rounded font-mono font-medium"
-                        style={{
-                          background: `${color}15`,
-                          color,
-                          border: `1px solid ${color}30`,
-                        }}
-                      >
+                  <TableRow key={tx._id}>
+                    <TableCell>
+                      <Badge variant={badgeVariant} className="font-mono">
                         {tx.type}
-                      </span>
-                    </td>
-                    <td>
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
                       <div className="font-mono text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                         {tx.symbol || '—'}
                       </div>
                       <div className="text-xs truncate max-w-24" style={{ color: 'var(--text-muted)' }}>{tx.name}</div>
-                    </td>
-                    <td className="text-right font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
                       {formatCurrency(tx.totalAmount, true)}
-                    </td>
-                    <td className="text-right text-xs" style={{ color: 'var(--text-muted)' }}>
+                    </TableCell>
+                    <TableCell className="text-right text-xs" style={{ color: 'var(--text-muted)' }}>
                       {new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )
               })}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       </div>
     </div>
   )

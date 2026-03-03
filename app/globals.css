@@ -277,26 +277,24 @@ body {
   background: rgba(234, 179, 8, 0.03);
 }
 
-/* Custom input styles */
-input, select, textarea {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--gold);
-}
-
-input::placeholder {
-  color: var(--text-muted);
+/* Legacy input reset — scoped to .legacy-input so shadcn <Input> is unaffected */
+@layer base {
+  .legacy-input,
+  .legacy-input:focus,
+  .legacy-input::placeholder {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .legacy-input:focus { border-color: var(--gold); }
+  .legacy-input::placeholder { color: var(--text-muted); }
 }
 
 select option {

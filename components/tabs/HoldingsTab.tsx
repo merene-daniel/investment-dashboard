@@ -3,6 +3,10 @@
 import { useState } from 'react'
 import { formatCurrency, formatPercent, getPnLClass } from '@/lib/utils'
 import { TrendingUp, TrendingDown, Filter, SortAsc } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 
 interface HoldingsTabProps {
   holdings: any[]
@@ -44,15 +48,17 @@ export default function HoldingsTab({ holdings, portfolio }: HoldingsTabProps) {
           { label: 'UNREALIZED P&L', value: formatCurrency(totalPnL, true), note: formatPercent((totalPnL / portfolio.totalInvested) * 100), pnl: totalPnL },
           { label: 'DAY P&L', value: formatCurrency(totalDayPnL, true), note: formatPercent((totalDayPnL / totalMV) * 100), pnl: totalDayPnL },
         ].map((item, i) => (
-          <div key={i} className="glass-card p-4">
-            <div className="text-xs font-mono mb-2" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>{item.label}</div>
-            <div className={`font-mono text-xl font-medium mb-1 ${item.pnl !== undefined ? getPnLClass(item.pnl) : ''}`} style={item.pnl === undefined ? { color: 'var(--text-primary)' } : {}}>
-              {item.value}
-            </div>
-            <div className={`text-xs ${item.pnl !== undefined ? getPnLClass(item.pnl) : ''}`} style={item.pnl === undefined ? { color: 'var(--text-muted)' } : {}}>
-              {item.note}
-            </div>
-          </div>
+          <Card key={i}>
+            <CardContent className="p-4">
+              <div className="text-xs font-mono mb-2" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>{item.label}</div>
+              <div className={`font-mono text-xl font-medium mb-1 ${item.pnl !== undefined ? getPnLClass(item.pnl) : ''}`} style={item.pnl === undefined ? { color: 'var(--text-primary)' } : {}}>
+                {item.value}
+              </div>
+              <div className={`text-xs ${item.pnl !== undefined ? getPnLClass(item.pnl) : ''}`} style={item.pnl === undefined ? { color: 'var(--text-muted)' } : {}}>
+                {item.note}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
@@ -60,10 +66,11 @@ export default function HoldingsTab({ holdings, portfolio }: HoldingsTabProps) {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           {assetTypes.map(type => (
-            <button
+            <Button
               key={type}
+              variant="outline"
+              size="sm"
               onClick={() => setFilterType(type)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: filterType === type ? 'rgba(234,179,8,0.15)' : 'transparent',
                 color: filterType === type ? '#eab308' : 'var(--text-muted)',
@@ -71,7 +78,7 @@ export default function HoldingsTab({ holdings, portfolio }: HoldingsTabProps) {
               }}
             >
               {type}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex items-center gap-1 ml-auto text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -81,108 +88,109 @@ export default function HoldingsTab({ holdings, portfolio }: HoldingsTabProps) {
       </div>
 
       {/* Holdings table */}
-      <div className="glass-card overflow-hidden">
-        <table className="w-full data-table">
-          <thead>
-            <tr>
-              <th className="text-left">Asset</th>
-              <th className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('weight')}>
-                <span className="flex items-center justify-end gap-1">Weight {sortBy === 'weight' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
-              </th>
-              <th className="text-right">Shares</th>
-              <th className="text-right">Avg Cost</th>
-              <th className="text-right">Price</th>
-              <th className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('marketValue')}>
-                <span className="flex items-center justify-end gap-1">Market Value {sortBy === 'marketValue' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
-              </th>
-              <th className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('unrealizedPnL')}>
-                <span className="flex items-center justify-end gap-1">Unrealized P&L {sortBy === 'unrealizedPnL' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
-              </th>
-              <th className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('dayChange')}>
-                <span className="flex items-center justify-end gap-1">Day Change {sortBy === 'dayChange' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
-              </th>
-              <th className="text-right">Beta</th>
-              <th className="text-right">Div Yield</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((h) => (
-              <tr key={h._id} className="group cursor-pointer">
-                <td>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0"
-                      style={{ background: `${h.color || '#eab308'}20`, color: h.color || '#eab308', border: `1px solid ${h.color || '#eab308'}30` }}
-                    >
-                      {h.symbol.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{h.symbol}</span>
-                        <span
-                          className="text-xs px-1.5 py-0.5 rounded"
-                          style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}
-                        >
-                          {h.assetType}
-                        </span>
-                      </div>
-                      <div className="text-xs truncate max-w-32" style={{ color: 'var(--text-muted)' }}>{h.sector}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <div className="w-16 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <Table className="data-table">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Asset</TableHead>
+                <TableHead className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('weight')}>
+                  <span className="flex items-center justify-end gap-1">Weight {sortBy === 'weight' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
+                </TableHead>
+                <TableHead className="text-right">Shares</TableHead>
+                <TableHead className="text-right">Avg Cost</TableHead>
+                <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('marketValue')}>
+                  <span className="flex items-center justify-end gap-1">Market Value {sortBy === 'marketValue' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
+                </TableHead>
+                <TableHead className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('unrealizedPnL')}>
+                  <span className="flex items-center justify-end gap-1">Unrealized P&L {sortBy === 'unrealizedPnL' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
+                </TableHead>
+                <TableHead className="text-right cursor-pointer hover:text-yellow-400 transition-colors" onClick={() => handleSort('dayChange')}>
+                  <span className="flex items-center justify-end gap-1">Day Change {sortBy === 'dayChange' ? (sortDir === 'desc' ? '↓' : '↑') : ''}</span>
+                </TableHead>
+                <TableHead className="text-right">Beta</TableHead>
+                <TableHead className="text-right">Div Yield</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sorted.map((h) => (
+                <TableRow key={h._id} className="group cursor-pointer">
+                  <TableCell>
+                    <div className="flex items-center gap-3">
                       <div
-                        className="h-full rounded-full"
-                        style={{ width: `${Math.min(h.weight, 100)}%`, background: h.color || '#eab308' }}
-                      />
+                        className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0"
+                        style={{ background: `${h.color || '#eab308'}20`, color: h.color || '#eab308', border: `1px solid ${h.color || '#eab308'}30` }}
+                      >
+                        {h.symbol.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{h.symbol}</span>
+                          <Badge variant="outline">
+                            {h.assetType}
+                          </Badge>
+                        </div>
+                        <div className="text-xs truncate max-w-32" style={{ color: 'var(--text-muted)' }}>{h.sector}</div>
+                      </div>
                     </div>
-                    <span className="font-mono text-xs w-10 text-right" style={{ color: 'var(--text-secondary)' }}>
-                      {h.weight?.toFixed(1)}%
-                    </span>
-                  </div>
-                </td>
-                <td className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  {h.shares.toLocaleString()}
-                </td>
-                <td className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  {formatCurrency(h.avgCostBasis)}
-                </td>
-                <td className="text-right font-mono text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                  {formatCurrency(h.currentPrice)}
-                </td>
-                <td className="text-right font-mono text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                  {formatCurrency(h.marketValue, true)}
-                </td>
-                <td className="text-right">
-                  <div className={`font-mono text-sm ${getPnLClass(h.unrealizedPnL)}`}>
-                    {h.unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(h.unrealizedPnL, true)}
-                  </div>
-                  <div className={`text-xs ${getPnLClass(h.unrealizedPnLPercent)}`}>
-                    {formatPercent(h.unrealizedPnLPercent)}
-                  </div>
-                </td>
-                <td className="text-right">
-                  <div className={`flex items-center justify-end gap-1 font-mono text-sm ${getPnLClass(h.dayChange)}`}>
-                    {h.dayChange >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {formatCurrency(Math.abs(h.dayChange))}
-                  </div>
-                  <div className={`text-xs text-right ${getPnLClass(h.dayChangePercent)}`}>
-                    {formatPercent(h.dayChangePercent)}
-                  </div>
-                </td>
-                <td className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  {h.beta?.toFixed(2)}
-                </td>
-                <td className="text-right font-mono text-sm" style={{ color: h.dividendYield > 0 ? '#10b981' : 'var(--text-muted)' }}>
-                  {h.dividendYield > 0 ? `${h.dividendYield.toFixed(2)}%` : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <div className="w-16 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${Math.min(h.weight, 100)}%`, background: h.color || '#eab308' }}
+                        />
+                      </div>
+                      <span className="font-mono text-xs w-10 text-right" style={{ color: 'var(--text-secondary)' }}>
+                        {h.weight?.toFixed(1)}%
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {h.shares.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {formatCurrency(h.avgCostBasis)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                    {formatCurrency(h.currentPrice)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                    {formatCurrency(h.marketValue, true)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant={h.unrealizedPnL >= 0 ? 'profit' : 'loss'} className="font-mono text-sm">
+                      {h.unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(h.unrealizedPnL, true)}
+                    </Badge>
+                    <div className={`text-xs mt-0.5 ${getPnLClass(h.unrealizedPnLPercent)}`}>
+                      {formatPercent(h.unrealizedPnLPercent)}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant={h.dayChange >= 0 ? 'profit' : 'loss'} className="font-mono text-sm">
+                      <span className="flex items-center gap-1">
+                        {h.dayChange >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                        {formatCurrency(Math.abs(h.dayChange))}
+                      </span>
+                    </Badge>
+                    <div className={`text-xs text-right mt-0.5 ${getPnLClass(h.dayChangePercent)}`}>
+                      {formatPercent(h.dayChangePercent)}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {h.beta?.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-sm" style={{ color: h.dividendYield > 0 ? '#10b981' : 'var(--text-muted)' }}>
+                    {h.dividendYield > 0 ? `${h.dividendYield.toFixed(2)}%` : '—'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }

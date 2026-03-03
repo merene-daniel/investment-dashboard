@@ -4,6 +4,7 @@ import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
+import { Skeleton } from '@/components/ui/skeleton'
 // Lightweight tabs — no heavy dependencies, static import is fine
 import HoldingsTab from './tabs/HoldingsTab'
 import TransactionsTab from './tabs/TransactionsTab'
@@ -11,16 +12,14 @@ import TransactionsTab from './tabs/TransactionsTab'
 // Loading skeleton shown while a tab chunk downloads (~50–200ms)
 function TabSkeleton() {
   return (
-    <div className="animate-pulse space-y-4">
+    <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} className="h-24 rounded-xl" style={{ background: 'var(--bg-card)' }} />
-        ))}
+        {[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-24" />)}
       </div>
-      <div className="h-64 rounded-xl" style={{ background: 'var(--bg-card)' }} />
+      <Skeleton className="h-64" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="h-48 rounded-xl" style={{ background: 'var(--bg-card)' }} />
-        <div className="h-48 rounded-xl" style={{ background: 'var(--bg-card)' }} />
+        <Skeleton className="h-48" />
+        <Skeleton className="h-48" />
       </div>
     </div>
   )

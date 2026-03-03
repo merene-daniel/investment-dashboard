@@ -6,6 +6,16 @@ import {
   Eye, Share2, Trash2, Bell, Globe, Mail, CheckCircle,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
 
 const LAST_UPDATED = 'March 2026'
 
@@ -98,12 +108,16 @@ export default function PrivacyPage() {
             </Link>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Link href="/" className="hidden md:flex items-center gap-1.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <ArrowLeft size={14} aria-hidden="true" /> Back to Home
-              </Link>
-              <Link href="/dashboard" className="btn-primary flex items-center gap-2 text-sm">
-                Dashboard <ChevronRight size={14} aria-hidden="true" />
-              </Link>
+              <Button variant="ghost" size="sm" asChild className="hidden md:flex">
+                <Link href="/">
+                  <ArrowLeft size={14} aria-hidden="true" /> Back to Home
+                </Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/dashboard">
+                  Dashboard <ChevronRight size={14} aria-hidden="true" />
+                </Link>
+              </Button>
             </div>
           </div>
         </nav>
@@ -114,10 +128,9 @@ export default function PrivacyPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.05) 0%, transparent 65%)' }} />
         <div className="relative max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6"
-            style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
+          <Badge variant="outline" className="mb-6 gap-2 px-4 py-2 rounded-full text-xs font-medium" style={{ background: 'rgba(234,179,8,0.08)', borderColor: 'rgba(234,179,8,0.2)', color: 'var(--gold)' }}>
             <Lock size={11} aria-hidden="true" /> Privacy Policy
-          </div>
+          </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Your Data, <span className="gold-text">Your Control</span>
           </h1>
@@ -142,33 +155,39 @@ export default function PrivacyPage() {
             {DATA_COLLECTED.map(d => {
               const Icon = d.icon
               return (
-                <div key={d.title} className="rounded-2xl p-5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: d.tintBg, border: `1px solid ${d.tintBorder}` }}>
-                      <Icon size={16} style={{ color: d.color }} aria-hidden="true" />
+                <Card key={d.title} className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: d.tintBg, border: `1px solid ${d.tintBorder}` }}>
+                        <Icon size={16} style={{ color: d.color }} aria-hidden="true" />
+                      </div>
+                      <CardTitle style={{ color: 'var(--text-primary)' }}>{d.title}</CardTitle>
                     </div>
-                    <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{d.title}</h3>
-                  </div>
-                  <ul className="flex flex-col gap-2">
-                    {d.items.map(item => (
-                      <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        <CheckCircle size={12} className="flex-shrink-0 mt-0.5" style={{ color: d.color }} aria-hidden="true" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="flex flex-col gap-2">
+                      {d.items.map(item => (
+                        <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                          <CheckCircle size={12} className="flex-shrink-0 mt-0.5" style={{ color: d.color }} aria-hidden="true" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
         </section>
 
         {/* ── How We Use Data ── */}
-        <section aria-labelledby="use-heading" className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <h2 id="use-heading" className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-            How We Use Your Data
-          </h2>
-          <div className="flex flex-col gap-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+        <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+          <CardHeader>
+            <CardTitle id="use-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+              How We Use Your Data
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 text-sm pt-0" style={{ color: 'var(--text-secondary)' }}>
             {[
               ['Provide the service', 'Your account and portfolio data is used to power the dashboard, calculate P&L, generate performance charts, and personalise your experience.'],
               ['Secure your account', 'Email addresses and phone numbers are used for authentication, MFA code delivery, and account recovery.'],
@@ -184,8 +203,8 @@ export default function PrivacyPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* ── Security ── */}
         <section aria-labelledby="security-heading">
@@ -194,97 +213,113 @@ export default function PrivacyPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {SECURITY_MEASURES.map(measure => (
-              <div key={measure} className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                <Lock size={13} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--profit)' }} aria-hidden="true" />
-                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{measure}</span>
-              </div>
+              <Alert key={measure} variant="profit" className="rounded-xl">
+                <Lock size={13} aria-hidden="true" />
+                <AlertDescription style={{ color: 'var(--text-secondary)' }}>{measure}</AlertDescription>
+              </Alert>
             ))}
           </div>
         </section>
 
         {/* ── Third Parties ── */}
-        <section aria-labelledby="third-party-heading" className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-3 mb-4">
-            <Share2 size={18} style={{ color: 'var(--gold)' }} aria-hidden="true" />
-            <h2 id="third-party-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-              Third-Party Services
-            </h2>
-          </div>
-          <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-            We use a small number of trusted third-party providers to operate the platform. Each is bound by data processing agreements and privacy standards equivalent to or stricter than this policy.
-          </p>
-          <div className="flex flex-col gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            {[
-              ['MongoDB Atlas', 'Encrypted cloud database hosting (AWS infrastructure). Data stored in the region closest to you.'],
-              ['Vercel', 'Application hosting and edge network. Processes request logs for up to 30 days.'],
-              ['Email Provider', 'Transactional email delivery (MFA codes, security alerts). Email addresses are not used for marketing by the provider.'],
-            ].map(([provider, desc]) => (
-              <div key={provider} className="flex items-start gap-2 py-2.5" style={{ borderBottom: '1px solid var(--border)' }}>
-                <span className="font-semibold flex-shrink-0 w-36" style={{ color: 'var(--text-primary)' }}>{provider}</span>
-                <span>{desc}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
-            We do <strong>not</strong> sell, rent, or trade your personal data to any third party for marketing or advertising purposes.
-          </p>
-        </section>
+        <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Share2 size={18} style={{ color: 'var(--gold)' }} aria-hidden="true" />
+              <CardTitle id="third-party-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+                Third-Party Services
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+              We use a small number of trusted third-party providers to operate the platform. Each is bound by data processing agreements and privacy standards equivalent to or stricter than this policy.
+            </p>
+            <div className="flex flex-col gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+              {[
+                ['MongoDB Atlas', 'Encrypted cloud database hosting (AWS infrastructure). Data stored in the region closest to you.'],
+                ['Vercel', 'Application hosting and edge network. Processes request logs for up to 30 days.'],
+                ['Email Provider', 'Transactional email delivery (MFA codes, security alerts). Email addresses are not used for marketing by the provider.'],
+              ].map(([provider, desc]) => (
+                <div key={provider} className="flex items-start gap-2 py-2.5" style={{ borderBottom: '1px solid var(--border)' }}>
+                  <span className="font-semibold flex-shrink-0 w-36" style={{ color: 'var(--text-primary)' }}>{provider}</span>
+                  <span>{desc}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
+              We do <strong>not</strong> sell, rent, or trade your personal data to any third party for marketing or advertising purposes.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* ── Cookies ── */}
-        <section aria-labelledby="cookies-heading" className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <h2 id="cookies-heading" className="text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-            Cookies &amp; Local Storage
-          </h2>
-          <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-            Armor uses <strong style={{ color: 'var(--text-primary)' }}>localStorage</strong> (not cookies) to store your theme preference (dark/light mode). No tracking cookies or third-party advertising pixels are used on this platform.
-          </p>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            Session authentication uses secure, httpOnly cookies with a short expiry. These are strictly necessary for the service to function and are not subject to consent requirements.
-          </p>
-        </section>
+        <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+          <CardHeader>
+            <CardTitle id="cookies-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+              Cookies &amp; Local Storage
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 pt-0">
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Armor uses <strong style={{ color: 'var(--text-primary)' }}>localStorage</strong> (not cookies) to store your theme preference (dark/light mode). No tracking cookies or third-party advertising pixels are used on this platform.
+            </p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Session authentication uses secure, httpOnly cookies with a short expiry. These are strictly necessary for the service to function and are not subject to consent requirements.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* ── Your Rights ── */}
         <section aria-labelledby="rights-heading">
           <h2 id="rights-heading" className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             Your Rights
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {RIGHTS.map(r => (
-              <div key={r.title} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--gold)' }}>{r.title}</h3>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{r.desc}</p>
-              </div>
-            ))}
-          </div>
+          <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+            <CardContent className="p-5">
+              <Accordion type="single" collapsible className="w-full">
+                {RIGHTS.map((r, i) => (
+                  <AccordionItem key={r.title} value={`right-${i}`} style={{ borderColor: 'var(--border)' }}>
+                    <AccordionTrigger className="text-sm font-semibold hover:no-underline" style={{ color: 'var(--gold)' }}>
+                      {r.title}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      {r.desc}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
         </section>
 
         {/* ── Deletion ── */}
-        <section aria-labelledby="deletion-heading" className="flex items-start gap-4 p-5 rounded-2xl"
-          style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-          <Trash2 size={20} className="flex-shrink-0 mt-1" style={{ color: 'var(--loss)' }} aria-hidden="true" />
-          <div>
-            <h2 id="deletion-heading" className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Account &amp; Data Deletion</h2>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              To permanently delete your account and all associated data (holdings, transactions, performance history, and account details), email us at <a href="mailto:privacy@armor-invest.com" className="underline" style={{ color: 'var(--gold)' }}>privacy@armor-invest.com</a> with the subject line "Delete My Account". We will complete the deletion within 30 days and send a confirmation. Backups are purged within 90 days of deletion.
-            </p>
-          </div>
-        </section>
+        <Alert variant="destructive" className="rounded-2xl p-5">
+          <Trash2 size={20} aria-hidden="true" />
+          <AlertTitle id="deletion-heading">Account &amp; Data Deletion</AlertTitle>
+          <AlertDescription style={{ color: 'var(--text-secondary)' }}>
+            To permanently delete your account and all associated data (holdings, transactions, performance history, and account details), email us at <a href="mailto:privacy@armor-invest.com" className="underline" style={{ color: 'var(--gold)' }}>privacy@armor-invest.com</a> with the subject line "Delete My Account". We will complete the deletion within 30 days and send a confirmation. Backups are purged within 90 days of deletion.
+          </AlertDescription>
+        </Alert>
 
         {/* ── Contact ── */}
-        <section aria-labelledby="privacy-contact-heading" className="rounded-2xl p-6 text-center"
-          style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.15)' }}>
-          <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
-          <h2 id="privacy-contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-            Privacy Enquiries
-          </h2>
-          <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-            Questions about this policy or how your data is handled? Our Data Protection Officer is available to help.
-          </p>
-          <a href="mailto:privacy@armor-invest.com" className="btn-primary inline-flex items-center gap-2 text-sm">
-            <Mail size={14} aria-hidden="true" />
-            privacy@armor-invest.com
-          </a>
-        </section>
+        <Card className="rounded-2xl text-center" style={{ background: 'rgba(234,179,8,0.04)', borderColor: 'rgba(234,179,8,0.15)' }}>
+          <CardContent className="p-6">
+            <Mail size={28} className="mx-auto mb-3" style={{ color: 'var(--gold)' }} aria-hidden="true" />
+            <h2 id="privacy-contact-heading" className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+              Privacy Enquiries
+            </h2>
+            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+              Questions about this policy or how your data is handled? Our Data Protection Officer is available to help.
+            </p>
+            <Button asChild>
+              <a href="mailto:privacy@armor-invest.com">
+                <Mail size={14} aria-hidden="true" />
+                privacy@armor-invest.com
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Footer ── */}

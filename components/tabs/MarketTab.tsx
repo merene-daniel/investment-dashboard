@@ -2,11 +2,20 @@
 
 import { useState, memo } from 'react'
 import {
-  TrendingUp, TrendingDown, Minus,
-  Globe, Clock, ExternalLink,
+  TrendingUp, TrendingDown,
+  Globe, Clock,
   ArrowUpRight, ArrowDownRight,
   Newspaper, BarChart3,
 } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from '@/components/ui/table'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -187,7 +196,6 @@ const SENTIMENT_STYLES: Record<string, { bg: string; color: string }> = {
 
 function MarketTab() {
   const [region, setRegion] = useState<'US' | 'Europe' | 'Asia'>('US')
-  const indices = INDICES[region]
   const maxSectorAbs = Math.max(...SECTORS.map(s => Math.abs(s.changePercent)))
 
   return (
@@ -213,121 +221,105 @@ function MarketTab() {
       </div>
 
       {/* ── Regional tabs + Index Grid ── */}
-      <div className="glass-card overflow-hidden">
-        {/* Tab bar */}
-        <div
-          role="tablist"
-          aria-label="Market region"
-          className="flex items-center gap-1 p-4 pb-0"
-          style={{ borderBottom: '1px solid var(--border)' }}
-        >
-          {(['US', 'Europe', 'Asia'] as const).map((r) => (
-            <button
-              key={r}
-              role="tab"
-              aria-selected={region === r}
-              aria-controls={`region-panel-${r}`}
-              id={`region-tab-${r}`}
-              onClick={() => setRegion(r)}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all duration-200 -mb-px"
-              style={
-                region === r
-                  ? {
-                      background: 'var(--bg-card)',
-                      borderTop: '1px solid var(--border)',
-                      borderLeft: '1px solid var(--border)',
-                      borderRight: '1px solid var(--border)',
-                      borderBottom: '1px solid var(--bg-card)',
-                      color: '#eab308',
-                    }
-                  : {
-                      background: 'transparent',
-                      border: '1px solid transparent',
-                      color: 'var(--text-secondary)',
-                    }
-              }
-            >
-              <Globe size={13} aria-hidden="true" />
-              {r}
-            </button>
-          ))}
-          <div className="flex-1" />
-          <span
-            className="text-xs pb-3 pr-1"
-            style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
+      <Tabs value={region} onValueChange={val => setRegion(val as 'US' | 'Europe' | 'Asia')}>
+        <Card className="overflow-hidden">
+          {/* Tab bar */}
+          <div
+            className="flex items-center gap-1 px-4 pt-4 pb-0"
+            style={{ borderBottom: '1px solid var(--border)' }}
           >
-            Real-time · USD
-          </span>
-        </div>
+            <TabsList className="h-auto bg-transparent p-0 gap-1">
+              {(['US', 'Europe', 'Asia'] as const).map((r) => (
+                <TabsTrigger
+                  key={r}
+                  value={r}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg rounded-b-none transition-all duration-200 -mb-px data-[state=active]:text-[#eab308] data-[state=active]:border data-[state=active]:border-b-card data-[state=inactive]:text-muted-foreground data-[state=inactive]:border-transparent data-[state=active]:bg-card"
+                  style={{ borderBottom: 'none' }}
+                >
+                  <Globe size={13} aria-hidden="true" />
+                  {r}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="flex-1" />
+            <span
+              className="text-xs pb-3 pr-1"
+              style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
+            >
+              Real-time · USD
+            </span>
+          </div>
 
-        {/* Index cards grid */}
-        <div
-          role="tabpanel"
-          id={`region-panel-${region}`}
-          aria-labelledby={`region-tab-${region}`}
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
-          style={{ background: 'var(--border)' }}
-        >
-          {indices.map((idx) => {
-            const up = idx.changePercent >= 0
-            return (
+          {/* Index cards grid — one TabsContent per region */}
+          {(['US', 'Europe', 'Asia'] as const).map((r) => (
+            <TabsContent key={r} value={r} className="mt-0">
               <div
-                key={idx.ticker}
-                className="p-5 transition-colors duration-200"
-                style={{ background: 'var(--bg-card)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-card-hover)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'var(--bg-card)')}
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
+                style={{ background: 'var(--border)' }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>
-                      {idx.ticker}
-                    </p>
-                    <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                      {idx.name}
-                    </p>
-                  </div>
-                  <Sparkline data={idx.sparkline} up={up} />
-                </div>
-                <div className="flex items-end justify-between">
-                  <p
-                    className="text-xl font-bold"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}
-                  >
-                    {idx.value}
-                  </p>
-                  <div className="flex items-center gap-1.5 text-right">
-                    {up
-                      ? <ArrowUpRight size={14} style={{ color: '#10b981' }} />
-                      : <ArrowDownRight size={14} style={{ color: '#ef4444' }} />
-                    }
-                    <div>
-                      <p
-                        className="text-sm font-semibold leading-tight"
-                        style={{ fontFamily: 'var(--font-mono)', color: up ? '#10b981' : '#ef4444' }}
-                      >
-                        {up ? '+' : ''}{idx.changePercent.toFixed(2)}%
-                      </p>
-                      <p
-                        className="text-xs leading-tight"
-                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}
-                      >
-                        {idx.change}
-                      </p>
+                {INDICES[r].map((idx) => {
+                  const up = idx.changePercent >= 0
+                  return (
+                    <div
+                      key={idx.ticker}
+                      className="p-5 transition-colors duration-200"
+                      style={{ background: 'var(--bg-card)' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-card-hover)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'var(--bg-card)')}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>
+                            {idx.ticker}
+                          </p>
+                          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {idx.name}
+                          </p>
+                        </div>
+                        <Sparkline data={idx.sparkline} up={up} />
+                      </div>
+                      <div className="flex items-end justify-between">
+                        <p
+                          className="text-xl font-bold"
+                          style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}
+                        >
+                          {idx.value}
+                        </p>
+                        <div className="flex items-center gap-1.5 text-right">
+                          {up
+                            ? <ArrowUpRight size={14} style={{ color: '#10b981' }} />
+                            : <ArrowDownRight size={14} style={{ color: '#ef4444' }} />
+                          }
+                          <div>
+                            <p
+                              className="text-sm font-semibold leading-tight"
+                              style={{ fontFamily: 'var(--font-mono)', color: up ? '#10b981' : '#ef4444' }}
+                            >
+                              {up ? '+' : ''}{idx.changePercent.toFixed(2)}%
+                            </p>
+                            <p
+                              className="text-xs leading-tight"
+                              style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}
+                            >
+                              {idx.change}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  )
+                })}
               </div>
-            )
-          })}
-        </div>
-      </div>
+            </TabsContent>
+          ))}
+        </Card>
+      </Tabs>
 
       {/* ── Bottom 2-column layout ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-        {/* ── Sector Performance (spans 1 col) ── */}
-        <section aria-labelledby="sector-heading" className="glass-card p-5">
+        {/* ── Sector Performance ── */}
+        <Card className="p-5" aria-labelledby="sector-heading">
           <div className="flex items-center gap-2 mb-5">
             <BarChart3 size={15} style={{ color: '#eab308' }} />
             <h3 id="sector-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -377,127 +369,121 @@ function MarketTab() {
               )
             })}
           </div>
-        </section>
+        </Card>
 
-        {/* ── Gainers & Losers (spans 1 col) ── */}
+        {/* ── Gainers & Losers ── */}
         <div className="space-y-4">
           {/* Gainers */}
-          <section aria-labelledby="gainers-heading" className="glass-card p-5">
+          <Card className="p-5" aria-labelledby="gainers-heading">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp size={15} style={{ color: '#10b981' }} />
               <h3 id="gainers-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                 Top Gainers
               </h3>
-              <span
-                className="ml-auto text-xs px-2 py-0.5 rounded-full"
+              <Badge
+                className="ml-auto text-xs"
                 style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', fontFamily: 'var(--font-mono)' }}
               >
-                S&P 500
-              </span>
+                S&amp;P 500
+              </Badge>
             </div>
-            <table className="w-full">
-              <tbody>
-                {GAINERS.map((m, i) => (
-                  <tr
-                    key={m.symbol}
-                    style={{ borderBottom: i < GAINERS.length - 1 ? '1px solid var(--border)' : 'none' }}
-                  >
-                    <td className="py-2 pr-2">
+            <Table>
+              <TableBody>
+                {GAINERS.map((m) => (
+                  <TableRow key={m.symbol} className="border-border">
+                    <TableCell className="py-2 pr-2 pl-0 w-9">
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
                         style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', fontFamily: 'var(--font-mono)' }}
                       >
                         {m.symbol.slice(0, 2)}
                       </div>
-                    </td>
-                    <td className="py-2">
+                    </TableCell>
+                    <TableCell className="py-2 px-0">
                       <p className="text-xs font-semibold leading-tight" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {m.symbol}
                       </p>
                       <p className="text-xs leading-tight" style={{ color: 'var(--text-muted)' }}>
                         {m.name}
                       </p>
-                    </td>
-                    <td className="py-2 text-right">
+                    </TableCell>
+                    <TableCell className="py-2 text-right">
                       <p className="text-xs font-medium" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {m.price}
                       </p>
-                    </td>
-                    <td className="py-2 pl-3 text-right">
+                    </TableCell>
+                    <TableCell className="py-2 pl-3 pr-0 text-right">
                       <span
                         className="text-xs font-semibold"
                         style={{ color: '#10b981', fontFamily: 'var(--font-mono)' }}
                       >
                         +{m.changePercent.toFixed(2)}%
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </section>
+              </TableBody>
+            </Table>
+          </Card>
 
           {/* Losers */}
-          <section aria-labelledby="losers-heading" className="glass-card p-5">
+          <Card className="p-5" aria-labelledby="losers-heading">
             <div className="flex items-center gap-2 mb-4">
               <TrendingDown size={15} style={{ color: '#ef4444' }} aria-hidden="true" />
               <h3 id="losers-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                 Top Losers
               </h3>
-              <span
-                className="ml-auto text-xs px-2 py-0.5 rounded-full"
+              <Badge
+                className="ml-auto text-xs"
                 style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', fontFamily: 'var(--font-mono)' }}
               >
-                S&P 500
-              </span>
+                S&amp;P 500
+              </Badge>
             </div>
-            <table className="w-full">
-              <tbody>
-                {LOSERS.map((m, i) => (
-                  <tr
-                    key={m.symbol}
-                    style={{ borderBottom: i < LOSERS.length - 1 ? '1px solid var(--border)' : 'none' }}
-                  >
-                    <td className="py-2 pr-2">
+            <Table>
+              <TableBody>
+                {LOSERS.map((m) => (
+                  <TableRow key={m.symbol} className="border-border">
+                    <TableCell className="py-2 pr-2 pl-0 w-9">
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
                         style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', fontFamily: 'var(--font-mono)' }}
                       >
                         {m.symbol.slice(0, 2)}
                       </div>
-                    </td>
-                    <td className="py-2">
+                    </TableCell>
+                    <TableCell className="py-2 px-0">
                       <p className="text-xs font-semibold leading-tight" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {m.symbol}
                       </p>
                       <p className="text-xs leading-tight" style={{ color: 'var(--text-muted)' }}>
                         {m.name}
                       </p>
-                    </td>
-                    <td className="py-2 text-right">
+                    </TableCell>
+                    <TableCell className="py-2 text-right">
                       <p className="text-xs font-medium" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {m.price}
                       </p>
-                    </td>
-                    <td className="py-2 pl-3 text-right">
+                    </TableCell>
+                    <TableCell className="py-2 pl-3 pr-0 text-right">
                       <span
                         className="text-xs font-semibold"
                         style={{ color: '#ef4444', fontFamily: 'var(--font-mono)' }}
                       >
                         {m.changePercent.toFixed(2)}%
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </section>
+              </TableBody>
+            </Table>
+          </Card>
         </div>
 
       </div>
 
       {/* ── Today's Top News — full width, 2-col grid ── */}
-      <section aria-labelledby="news-heading" className="glass-card p-5">
+      <Card className="p-5" aria-labelledby="news-heading">
         <div className="flex items-center gap-2 mb-5">
           <Newspaper size={15} style={{ color: '#eab308' }} aria-hidden="true" />
           <h3 id="news-heading" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -527,25 +513,26 @@ function MarketTab() {
               >
                 {/* Meta row */}
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded"
+                  <Badge
+                    className="text-xs font-semibold"
                     style={{ background: 'rgba(234,179,8,0.1)', color: '#eab308', fontFamily: 'var(--font-mono)' }}
                   >
                     {item.source}
-                  </span>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  </Badge>
+                  <Badge
+                    className="text-xs font-medium"
                     style={{ background: s.bg, color: s.color }}
                     aria-label={`Sentiment: ${item.sentiment}`}
                   >
                     {item.sentiment}
-                  </span>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded"
-                    style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="text-xs"
+                    style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)' }}
                   >
                     {item.category}
-                  </span>
+                  </Badge>
                   <span className="ml-auto flex items-center gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
                     <Clock size={10} aria-hidden="true" />
                     <time>{item.time}</time>
@@ -559,7 +546,7 @@ function MarketTab() {
             )
           })}
         </div>
-      </section>
+      </Card>
     </div>
   )
 }

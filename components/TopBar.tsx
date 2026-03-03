@@ -3,6 +3,10 @@
 import { Bell, Search, Menu, RefreshCw } from 'lucide-react'
 import { formatCurrency, formatPercent, getPnLClass } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 interface TopBarProps {
   portfolio: any
@@ -11,18 +15,18 @@ interface TopBarProps {
 }
 
 const tickerData = [
-  { symbol: 'AAPL', price: 189.84, change: 1.23 },
-  { symbol: 'MSFT', price: 415.26, change: -0.54 },
-  { symbol: 'NVDA', price: 875.35, change: 3.21 },
-  { symbol: 'AMZN', price: 186.52, change: 0.87 },
-  { symbol: 'GOOGL', price: 172.63, change: -1.12 },
-  { symbol: 'JPM', price: 212.45, change: 0.34 },
-  { symbol: 'BRK.B', price: 378.90, change: 0.12 },
-  { symbol: 'VOO', price: 485.62, change: 0.92 },
-  { symbol: 'S&P 500', price: 5243.77, change: 0.68 },
-  { symbol: 'NASDAQ', price: 16742.39, change: 0.94 },
-  { symbol: 'BTC/USD', price: 67842.00, change: 2.34 },
-  { symbol: 'ETH/USD', price: 3521.40, change: 1.87 },
+  { symbol: 'AAPL',    price: 189.84,   change:  1.23 },
+  { symbol: 'MSFT',    price: 415.26,   change: -0.54 },
+  { symbol: 'NVDA',    price: 875.35,   change:  3.21 },
+  { symbol: 'AMZN',    price: 186.52,   change:  0.87 },
+  { symbol: 'GOOGL',   price: 172.63,   change: -1.12 },
+  { symbol: 'JPM',     price: 212.45,   change:  0.34 },
+  { symbol: 'BRK.B',   price: 378.90,   change:  0.12 },
+  { symbol: 'VOO',     price: 485.62,   change:  0.92 },
+  { symbol: 'S&P 500', price: 5243.77,  change:  0.68 },
+  { symbol: 'NASDAQ',  price: 16742.39, change:  0.94 },
+  { symbol: 'BTC/USD', price: 67842.00, change:  2.34 },
+  { symbol: 'ETH/USD', price: 3521.40,  change:  1.87 },
 ]
 
 export default function TopBar({ portfolio, sidebarOpen, setSidebarOpen }: TopBarProps) {
@@ -59,17 +63,18 @@ export default function TopBar({ portfolio, sidebarOpen, setSidebarOpen }: TopBa
       {/* Main top bar */}
       <div className="flex items-center justify-between px-6 py-3">
         <div className="flex items-center gap-4">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
             aria-expanded={sidebarOpen}
             aria-controls="dashboard-sidebar"
-            className="p-2 rounded-lg transition-colors lg:hidden"
-            style={{ color: 'var(--text-secondary)' }}
+            className="lg:hidden"
           >
             <Menu size={18} aria-hidden="true" />
-          </button>
-          
+          </Button>
+
           {portfolio && (
             <div>
               <h1 className="font-display text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -77,83 +82,65 @@ export default function TopBar({ portfolio, sidebarOpen, setSidebarOpen }: TopBa
               </h1>
               <div className="flex items-center gap-3 mt-0.5">
                 <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{dateStr} · {timeStr}</span>
-                <span
-                  className="text-xs px-2 py-0.5 rounded"
-                  style={{
-                    background: 'rgba(16,185,129,0.1)',
-                    color: '#10b981',
-                    border: '1px solid rgba(16,185,129,0.2)',
-                  }}
-                >
-                  MARKET OPEN
-                </span>
+                <Badge variant="profit" className="text-[10px] uppercase tracking-wider">
+                  Market Open
+                </Badge>
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Search */}
-          <div
-            role="search"
-            className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            <Search size={14} style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
-            <input
+          <div role="search" className="relative hidden md:flex items-center">
+            <Search
+              size={14}
+              className="absolute left-3 pointer-events-none"
+              style={{ color: 'var(--text-muted)' }}
+              aria-hidden="true"
+            />
+            <Input
               type="search"
               placeholder="Search symbol..."
               aria-label="Search for a stock symbol"
-              className="bg-transparent text-sm outline-none w-32"
-              style={{ color: 'var(--text-primary)', border: 'none', padding: 0 }}
+              className="pl-8 w-40 h-9 text-sm"
             />
           </div>
 
-          {/* Theme toggle */}
           <ThemeToggle />
 
-          {/* Refresh */}
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => window.location.reload()}
             aria-label="Refresh dashboard data"
-            className="p-2 rounded-lg transition-all hover:rotate-180"
-            style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-secondary)',
-              transition: 'transform 0.5s, color 0.2s',
-            }}
+            className="hover:rotate-180 transition-transform duration-500"
           >
             <RefreshCw size={16} aria-hidden="true" />
-          </button>
+          </Button>
 
-          {/* Notifications */}
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             aria-label="Notifications — 1 unread"
-            className="relative p-2 rounded-lg"
-            style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-secondary)',
-            }}
+            className="relative"
           >
             <Bell size={16} aria-hidden="true" />
             <span
               className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
-              style={{ background: '#eab308' }}
+              style={{ background: 'var(--gold)' }}
               aria-hidden="true"
             />
-          </button>
+          </Button>
 
-          {/* Avatar */}
-          <div
-            role="img"
-            aria-label="User profile — J"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold"
-            style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)', color: '#0d0d0a' }}
-          >
-            J
-          </div>
+          <Avatar className="w-8 h-8">
+            <AvatarFallback
+              className="text-sm font-semibold text-black"
+              style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)' }}
+            >
+              J
+            </AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </header>

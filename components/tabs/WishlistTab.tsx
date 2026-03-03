@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { formatCurrency } from '@/lib/utils'
-import { Plus, Trash2, X, Heart, TrendingUp, TrendingDown } from 'lucide-react'
+import { Plus, Trash2, Heart, TrendingUp, TrendingDown } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Separator } from '@/components/ui/separator'
 
 interface WishlistTabProps {
   wishlist:  any[]
@@ -11,6 +23,12 @@ interface WishlistTabProps {
 
 const PRIORITIES  = ['High', 'Medium', 'Low'] as const
 const SECTORS     = ['Technology', 'Financials', 'Healthcare', 'Consumer', 'Energy', 'Industrials', 'Materials', 'Utilities', 'Real Estate', 'Communication', 'Other']
+
+const PRIORITY_BADGE_VARIANT: Record<string, 'destructive' | 'default' | 'profit'> = {
+  High:   'destructive',
+  Medium: 'default',
+  Low:    'profit',
+}
 
 const PRIORITY_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   High:   { bg: 'rgba(239,68,68,0.1)',   color: '#ef4444', border: 'rgba(239,68,68,0.25)'   },
@@ -38,7 +56,7 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
   const [deletingId,  setDeletingId]  = useState<string | null>(null)
   const [formError,   setFormError]   = useState('')
 
-  // Close modal on Escape
+  // Close modal on Escape — Dialog handles this natively, but keep for safety
   useEffect(() => {
     if (!modalOpen) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeModal() }
@@ -139,14 +157,16 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
           { label: 'HIGH PRIORITY',   value: `${highCount} stocks`,                color: '#ef4444'  },
           { label: 'AVG TARGET PRICE',value: avgTarget ? formatCurrency(avgTarget) : '—', color: '#10b981' },
         ].map((item, i) => (
-          <div key={i} className="glass-card p-4">
-            <div className="text-xs font-mono mb-2" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-              {item.label}
-            </div>
-            <div className="font-mono text-xl font-medium" style={{ color: item.color }}>
-              {item.value}
-            </div>
-          </div>
+          <Card key={i}>
+            <CardContent className="p-4">
+              <div className="text-xs font-mono mb-2" style={{ color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+                {item.label}
+              </div>
+              <div className="font-mono text-xl font-medium" style={{ color: item.color }}>
+                {item.value}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
@@ -174,32 +194,22 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
         </div>
 
         {/* Search */}
-        <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-        >
-          <input
-            placeholder="Search symbol or name..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="bg-transparent text-sm outline-none"
-            style={{ color: 'var(--text-primary)', border: 'none', padding: 0, width: '160px' }}
-          />
-        </div>
+        <Input
+          placeholder="Search symbol or name..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-52"
+        />
 
-        <button
-          onClick={openModal}
-          className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ background: 'linear-gradient(135deg, #eab308, #ca8a04)', color: '#0d0d0a' }}
-        >
+        <Button onClick={openModal} className="ml-auto">
           <Plus size={14} />
           Add to Wishlist
-        </button>
+        </Button>
       </div>
 
       {/* ── Cards grid ────────────────────────────────────────────────── */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 glass-card">
+        <Card className="flex flex-col items-center justify-center py-20">
           <Heart size={40} style={{ color: 'var(--text-muted)' }} className="mb-4" />
           <p className="font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>
             {list.length === 0 ? 'Your wishlist is empty' : 'No stocks match your filter'}
@@ -207,7 +217,7 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             {list.length === 0 ? 'Add stocks you want to watch or buy' : 'Try adjusting your search or filter'}
           </p>
-        </div>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(item => {
@@ -220,11 +230,7 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
             const belowTarget = pctDiff !== null && pctDiff < 0
 
             return (
-              <div
-                key={item._id}
-                className="glass-card p-5 flex flex-col gap-3"
-                style={{ transition: 'border-color 0.2s' }}
-              >
+              <Card key={item._id} className="flex flex-col gap-3 p-5">
                 {/* Card header: symbol + priority + delete */}
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -238,48 +244,48 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
 
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Priority badge */}
-                    <span
-                      className="text-xs px-2 py-0.5 rounded font-medium"
-                      style={{ background: pStyle.bg, color: pStyle.color, border: `1px solid ${pStyle.border}` }}
+                    <Badge
+                      variant={PRIORITY_BADGE_VARIANT[item.priority] ?? 'secondary'}
+                      className="text-xs"
+                      style={{ background: pStyle.bg, color: pStyle.color, borderColor: pStyle.border }}
                     >
                       {item.priority}
-                    </span>
+                    </Badge>
 
                     {/* Delete / confirm */}
                     {confirming ? (
                       <div className="flex items-center gap-1">
-                        <button
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => setDeletingId(null)}
-                          className="text-xs px-2 py-0.5 rounded"
-                          style={{ color: 'var(--text-secondary)', border: '1px solid var(--border)', background: 'var(--bg-card)' }}
                         >
                           No
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
                           onClick={() => handleDelete(item._id)}
-                          className="text-xs px-2 py-0.5 rounded font-medium"
-                          style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}
                         >
                           Yes
-                        </button>
+                        </Button>
                       </div>
                     ) : (
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setDeletingId(item._id)}
                         aria-label={`Remove ${item.symbol} from wishlist`}
-                        className="p-1 rounded-lg transition-colors"
-                        style={{ color: 'var(--text-muted)' }}
-                        onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 size={13} />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div style={{ height: '1px', background: 'var(--border)' }} />
+                <Separator />
 
                 {/* Price section */}
                 <div className="flex items-end justify-between gap-4">
@@ -318,16 +324,9 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
                 {/* Sector tag */}
                 {item.sector && (
                   <div>
-                    <span
-                      className="text-xs px-2 py-0.5 rounded"
-                      style={{
-                        background: 'rgba(234,179,8,0.06)',
-                        color:      'var(--text-muted)',
-                        border:     '1px solid var(--border)',
-                      }}
-                    >
+                    <Badge variant="outline" className="text-xs">
                       {item.sector}
-                    </span>
+                    </Badge>
                   </div>
                 )}
 
@@ -340,193 +339,145 @@ export default function WishlistTab({ wishlist: initialList, portfolio }: Wishli
                     {item.notes}
                   </p>
                 )}
-              </div>
+              </Card>
             )
           })}
         </div>
       )}
 
-      {/* ── Add Wishlist Modal ─────────────────────────────────────────── */}
-      {modalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="wishlist-modal-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(6px)' }}
-          onClick={e => { if (e.target === e.currentTarget) closeModal() }}
-        >
-          <div
-            className="w-full max-w-lg rounded-2xl"
-            style={{
-              background: 'var(--bg-secondary)',
-              border:     '1px solid var(--border)',
-              maxHeight:  '92vh',
-              overflowY:  'auto',
-            }}
-          >
-            {/* Header */}
-            <div
-              className="flex items-center justify-between px-6 py-4"
-              style={{ borderBottom: '1px solid var(--border)' }}
-            >
-              <div className="flex items-center gap-3">
-                <Heart size={18} style={{ color: '#eab308' }} />
-                <h2
-                  id="wishlist-modal-title"
-                  className="font-display font-semibold text-lg"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  Add to Wishlist
-                </h2>
-              </div>
-              <button
-                onClick={closeModal}
-                aria-label="Close modal"
-                className="p-1.5 rounded-lg transition-colors"
-                style={{ color: 'var(--text-muted)', background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-              >
-                <X size={16} />
-              </button>
-            </div>
+      {/* ── Add Wishlist Dialog ────────────────────────────────────────── */}
+      <Dialog open={modalOpen} onOpenChange={open => { if (!open) closeModal() }}>
+        <DialogContent className="max-w-lg max-h-[92vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Heart size={18} style={{ color: '#eab308' }} />
+              Add to Wishlist
+            </DialogTitle>
+          </DialogHeader>
 
-            {/* Form */}
-            <form onSubmit={handleAdd} className="px-6 py-5 space-y-4">
+          {/* Form */}
+          <form onSubmit={handleAdd} className="space-y-4 pt-2">
 
-              {/* Symbol + Name */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    SYMBOL *
-                  </label>
-                  <input
-                    placeholder="AAPL"
-                    value={form.symbol}
-                    onChange={e => setField('symbol', e.target.value.toUpperCase())}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    COMPANY NAME *
-                  </label>
-                  <input
-                    placeholder="Apple Inc."
-                    value={form.name}
-                    onChange={e => setField('name', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Target Price + Current Price */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    TARGET PRICE *
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    placeholder="165.00"
-                    value={form.targetPrice}
-                    onChange={e => setField('targetPrice', e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    CURRENT PRICE
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    placeholder="189.84 (optional)"
-                    value={form.currentPrice}
-                    onChange={e => setField('currentPrice', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Sector + Priority */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    SECTOR
-                  </label>
-                  <select value={form.sector} onChange={e => setField('sector', e.target.value)}>
-                    <option value="">Select sector...</option>
-                    {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                    PRIORITY
-                  </label>
-                  <select value={form.priority} onChange={e => setField('priority', e.target.value)}>
-                    {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              {/* Notes */}
+            {/* Symbol + Name */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-                  NOTES
+                  SYMBOL *
                 </label>
-                <textarea
-                  rows={3}
-                  placeholder="Why are you watching this stock? Target entry thesis..."
-                  value={form.notes}
-                  onChange={e => setField('notes', e.target.value)}
-                  style={{ resize: 'vertical' }}
+                <Input
+                  placeholder="AAPL"
+                  value={form.symbol}
+                  onChange={e => setField('symbol', e.target.value.toUpperCase())}
+                  required
                 />
               </div>
-
-              {/* Error */}
-              {formError && (
-                <div
-                  className="text-sm px-3 py-2 rounded-lg"
-                  style={{
-                    background: 'rgba(239,68,68,0.1)',
-                    color:      '#ef4444',
-                    border:     '1px solid rgba(239,68,68,0.25)',
-                  }}
-                >
-                  {formError}
-                </div>
-              )}
-
-              {/* Buttons */}
-              <div className="flex gap-3 pt-1">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-medium"
-                  style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
-                  style={{
-                    background: 'linear-gradient(135deg, #eab308, #ca8a04)',
-                    color:      '#0d0d0a',
-                    opacity:    submitting ? 0.65 : 1,
-                    cursor:     submitting ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {submitting ? 'Adding…' : 'Add to Wishlist'}
-                </button>
+              <div>
+                <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                  COMPANY NAME *
+                </label>
+                <Input
+                  placeholder="Apple Inc."
+                  value={form.name}
+                  onChange={e => setField('name', e.target.value)}
+                  required
+                />
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+
+            {/* Target Price + Current Price */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                  TARGET PRICE *
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="165.00"
+                  value={form.targetPrice}
+                  onChange={e => setField('targetPrice', e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                  CURRENT PRICE
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="189.84 (optional)"
+                  value={form.currentPrice}
+                  onChange={e => setField('currentPrice', e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Sector + Priority */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                  SECTOR
+                </label>
+                <select value={form.sector} onChange={e => setField('sector', e.target.value)}>
+                  <option value="">Select sector...</option>
+                  {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                  PRIORITY
+                </label>
+                <select value={form.priority} onChange={e => setField('priority', e.target.value)}>
+                  {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="block text-xs font-mono mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+                NOTES
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Why are you watching this stock? Target entry thesis..."
+                value={form.notes}
+                onChange={e => setField('notes', e.target.value)}
+                style={{ resize: 'vertical' }}
+              />
+            </div>
+
+            {/* Error */}
+            {formError && (
+              <Alert variant="destructive">
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Buttons */}
+            <div className="flex gap-3 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeModal}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="flex-1"
+              >
+                {submitting ? 'Adding…' : 'Add to Wishlist'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
