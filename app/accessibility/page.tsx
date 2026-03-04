@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import {
   ArrowLeft, ChevronRight, Shield, Eye, Keyboard,
@@ -217,7 +215,7 @@ export default function AccessibilityPage() {
         {/* ── Testing ── */}
         <Card className="rounded-2xl" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
           <CardHeader>
-            <CardTitle as="h2" id="testing-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+            <CardTitle id="testing-heading" className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
               How We Test
             </CardTitle>
           </CardHeader>

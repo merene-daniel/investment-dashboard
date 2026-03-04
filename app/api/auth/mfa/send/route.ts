@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { randomBytes, scryptSync } from 'crypto'
 import connectDB from '@/lib/mongodb'
 import MFAToken from '@/models/MFAToken'
+import { rateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 function generateOTP(): string {
   // Cryptographically secure 6-digit code
@@ -19,6 +20,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/
 
 export async function POST(request: Request) {
+  // ── Rate limit: 3 requests per 10 minutes per target ────────────────────────
+  // Parsed before full body read so we fail fast on a duplicate target
+  const ip   = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ipRl = rateLimit(`mfa-send:${ip}`, 10, 10 * 60_000)
+  if (!ipRl.allowed) return rateLimitResponse(ipRl.resetAt)
+
   try {
     const body = await request.json()
     const { userId, type, target } = body
@@ -52,6 +59,10 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+
+    // Per-target rate limit: 3 OTPs per 10 minutes (prevents target-based enumeration)
+    const targetRl = rateLimit(`mfa-send-target:${normalizedTarget}`, 3, 10 * 60_000)
+    if (!targetRl.allowed) return rateLimitResponse(targetRl.resetAt)
 
     await connectDB()
 

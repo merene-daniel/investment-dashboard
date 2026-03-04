@@ -20,7 +20,6 @@ const navItems = [
   { id: 'holdings'     as TabType, icon: TrendingUp,      label: 'Holdings'     },
   { id: 'transactions' as TabType, icon: List,            label: 'Transactions' },
   { id: 'wishlist'     as TabType, icon: Heart,           label: 'Wishlist'     },
-  { id: 'security'     as TabType, icon: Shield,          label: 'Security'     },
   { id: 'analytics'    as TabType, icon: BarChart2,       label: 'Analytics'    },
 ]
 

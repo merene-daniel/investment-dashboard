@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
+import { headers } from 'next/headers'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
+
+const BASE_URL = 'https://armorinvest.com'
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -25,15 +28,79 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Armor — Investment Management',
-  description: 'Professional investment portfolio management dashboard',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'Armor — Professional Investment Management',
+    template: '%s | Armor',
+  },
+  description:
+    'Armor is a professional investment portfolio management platform. Track holdings, analyse performance, manage watchlists, and stay secure — all in one place.',
+  keywords: [
+    'investment management',
+    'portfolio tracker',
+    'stock portfolio',
+    'investment dashboard',
+    'wealth management',
+    'holdings tracker',
+    'financial analytics',
+    'investment platform',
+  ],
+  authors: [{ name: 'Armor', url: BASE_URL }],
+  creator: 'Armor',
+  publisher: 'Armor',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: BASE_URL,
+    siteName: 'Armor',
+    title: 'Armor — Professional Investment Management',
+    description:
+      'Track your portfolio, analyse performance, and manage your investments with confidence.',
+    images: [
+      {
+        url: '/images/armor_logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Armor — Investment Management Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Armor — Professional Investment Management',
+    description:
+      'Track your portfolio, analyse performance, and manage your investments with confidence.',
+    images: ['/images/armor_logo.png'],
+    creator: '@armorinvest',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Nonce injected by middleware — required for nonce-based CSP
+  const nonce = (await headers()).get('x-nonce') ?? ''
+
   return (
     <html
       lang="en"
@@ -44,8 +111,30 @@ export default function RootLayout({
       <body className="grain bg-grid min-h-screen">
         {/* Anti-flash: read persisted theme before React hydrates */}
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `try{var t=localStorage.getItem('armor-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(_){}`,
+          }}
+        />
+        <script
+          nonce={nonce}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Armor',
+              url: BASE_URL,
+              logo: `${BASE_URL}/images/armor_logo.png`,
+              description:
+                'Professional investment portfolio management platform for tracking holdings, analysing performance, and staying secure.',
+              sameAs: [],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'customer support',
+                email: 'support@armorinvest.com',
+              },
+            }),
           }}
         />
         <ThemeProvider>

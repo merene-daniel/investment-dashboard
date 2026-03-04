@@ -2,8 +2,14 @@ import { NextResponse } from 'next/server'
 import { scryptSync, timingSafeEqual } from 'crypto'
 import connectDB from '@/lib/mongodb'
 import MFAToken from '@/models/MFAToken'
+import { rateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  // ── Rate limit: 10 attempts per 10 minutes per IP ────────────────────────
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const rl = rateLimit(`mfa-verify:${ip}`, 10, 10 * 60_000)
+  if (!rl.allowed) return rateLimitResponse(rl.resetAt)
+
   try {
     const body = await request.json()
     const { target, code } = body
@@ -15,18 +21,23 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!/^\d{6}$/.test(code)) {
+    if (typeof code !== 'string' || !/^\d{6}$/.test(code)) {
       return NextResponse.json(
         { success: false, error: 'Code must be exactly 6 digits.' },
         { status: 400 }
       )
     }
 
+    // Per-target rate limit: 5 guesses per 10 minutes
+    const normalizedTarget = String(target).toLowerCase().trim()
+    const targetRl = rateLimit(`mfa-verify-target:${normalizedTarget}`, 5, 10 * 60_000)
+    if (!targetRl.allowed) return rateLimitResponse(targetRl.resetAt)
+
     await connectDB()
 
     // Most recent valid token for this target
     const token = await MFAToken.findOne({
-      target: target.toLowerCase().trim(),
+      target: normalizedTarget,
       used: false,
       expiresAt: { $gt: new Date() },
     }).sort({ createdAt: -1 })
@@ -41,7 +52,7 @@ export async function POST(request: Request) {
     // Timing-safe OTP comparison
     let codeMatch = false
     try {
-      const storedHash = Buffer.from(token.codeHash, 'hex')
+      const storedHash    = Buffer.from(token.codeHash, 'hex')
       const candidateHash = scryptSync(code, token.salt, 32)
       codeMatch = timingSafeEqual(storedHash, candidateHash)
     } catch {
