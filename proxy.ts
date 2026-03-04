@@ -34,7 +34,7 @@ function buildCSP(nonce: string): string {
   return directives.join('; ')
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Cryptographically random nonce — unique per request
   // btoa() is used (Web API) instead of Buffer, which is not available in Edge Runtime
   const nonce = btoa(crypto.randomUUID())
