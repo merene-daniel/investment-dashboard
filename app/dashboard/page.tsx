@@ -1,3 +1,8 @@
+// Always render server-side at request time — never statically pre-build.
+// Without this, Next.js generates the page at build time when MongoDB is
+// unreachable on the build server, resulting in permanently empty data.
+export const dynamic = 'force-dynamic'
+
 import connectDB from '@/lib/mongodb'
 import Portfolio from '@/models/Portfolio'
 import Holding from '@/models/Holding'

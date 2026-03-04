@@ -1,0 +1,25 @@
+# ── Netlify configuration ───────────────────────────────────────────────────
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  # Pin Node.js to the same major version used locally
+  NODE_VERSION = "20"
+
+# ── Next.js runtime plugin ──────────────────────────────────────────────────
+# Enables server components, API routes, and proxy (edge functions) on Netlify.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# ── Redirects ───────────────────────────────────────────────────────────────
+# next.config.js handles app-level redirects.
+# This rule catches any Netlify-level 404 before Next.js sees the request
+# and routes it through the Next.js not-found page instead of a raw 404.
+[[redirects]]
+  from   = "/*"
+  to     = "/.netlify/functions/___netlify-server-handler"
+  status = 200
+  force  = false
