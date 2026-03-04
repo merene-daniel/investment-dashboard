@@ -16,7 +16,7 @@ async function getDashboardData() {
       Transaction.find({}).sort({ date: -1 }).limit(20).lean(),
       PerformanceSnapshot.find({})
         .sort({ date: 1 })
-        .where('date').gte(new Date(Date.now() - 365 * 86400000))
+        .where('date').gte(Date.now() - 365 * 86400000)
         .lean(),
       Wishlist.find({}).sort({ createdAt: -1 }).lean(),
     ])
