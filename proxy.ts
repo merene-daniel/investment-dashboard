@@ -20,16 +20,17 @@ import { NextResponse, type NextRequest } from 'next/server'
  *   node -e "const c=require('crypto');const s=JSON.stringify({...});console.log(c.createHash('sha256').update(s).digest('base64'))"
  */
 
-// SHA-256 of the JSON.stringify output of the Organisation JSON-LD in layout.tsx.
-// Recompute if the JSON-LD object changes.
-const JSONLD_HASH = 'sha256-NLkOSXkrAtSCcA4TZTmju+HCbyHVZoIwYd5fBvTIAAY='
-
 function buildCSP(): string {
   const directives = [
     "default-src 'self'",
-    // 'self' covers external scripts in /public (theme-init.js etc.)
-    // Hash covers the static JSON-LD <script type="application/ld+json">
-    `script-src 'self' '${JSONLD_HASH}'`,
+    // 'self'          — Next.js static chunks (/_next/static/...)
+    // 'unsafe-inline' — REQUIRED for Next.js App Router RSC payload scripts
+    //                   (self.__next_f.push(...) inline scripts that carry component
+    //                   props/data to the client). These change on every request so
+    //                   static hashes are impossible; nonces require header forwarding
+    //                   which Netlify's edge→serverless hop strips. This is a known
+    //                   Next.js App Router limitation — see nextjs.org/docs/app/building-your-application/configuring/content-security-policy
+    "script-src 'self' 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: blob:",
@@ -48,7 +49,7 @@ function buildCSP(): string {
   return directives.join('; ')
 }
 
-export function proxy(request: NextRequest) {
+export function proxy(_request: NextRequest) {
   const response = NextResponse.next()
 
   // ── Security headers ────────────────────────────────────────────────────────

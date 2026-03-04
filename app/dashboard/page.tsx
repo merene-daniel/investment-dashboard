@@ -34,15 +34,17 @@ async function getDashboardData() {
     }))
 
     return {
+      dbError:      null as string | null,
       portfolios:   JSON.parse(JSON.stringify(portfolios)),
       holdings:     JSON.parse(JSON.stringify(holdings)),
       transactions: JSON.parse(JSON.stringify(transactions)),
       performance,
       wishlist:     JSON.parse(JSON.stringify(wishlist)),
     }
-  } catch (error) {
-    console.error('DB Error:', error)
+  } catch (error: any) {
+    console.error('Dashboard DB Error:', error)
     return {
+      dbError:      (error?.message ?? 'Unknown database error') as string,
       portfolios:   [],
       holdings:     [],
       transactions: [],

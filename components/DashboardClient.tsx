@@ -52,6 +52,7 @@ export type TabType = 'overview' | 'holdings' | 'transactions' | 'analytics' | '
 
 interface DashboardClientProps {
   initialData: {
+    dbError:      string | null
     portfolios:   any[]
     holdings:     any[]
     transactions: any[]
@@ -69,7 +70,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   }, [])
 
   const portfolio = initialData.portfolios[0]
-  const isEmptyState = !portfolio
+  const isDbError   = !!initialData.dbError
+  const isEmptyState = !isDbError && !portfolio
 
   return (
     <div className="relative flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -105,7 +107,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           style={{ backgroundColor: 'var(--bg-primary)' }}
           tabIndex={-1}
         >
-          {isEmptyState ? (
+          {isDbError ? (
+            <DbErrorState message={initialData.dbError!} />
+          ) : isEmptyState ? (
             <EmptyState />
           ) : (
             <>
@@ -138,6 +142,32 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             </>
           )}
         </main>
+      </div>
+    </div>
+  )
+}
+
+function DbErrorState({ message }: { message: string }) {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="text-center max-w-lg">
+        <div className="text-5xl mb-4">⚠️</div>
+        <h2 className="text-2xl font-display mb-2" style={{ color: 'var(--text-primary)' }}>
+          Database Connection Failed
+        </h2>
+        <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Could not connect to MongoDB. Check that <code style={{ color: 'var(--gold)' }}>MONGODB_URI</code> is set
+          in your environment variables and that your Atlas cluster allows connections from this host.
+        </p>
+        <code
+          className="block text-xs text-left px-4 py-3 rounded mb-4 break-all"
+          style={{ background: 'var(--bg-card)', color: 'var(--loss)', border: '1px solid var(--border)' }}
+        >
+          {message}
+        </code>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+          On Netlify: Site settings → Environment variables → add <code style={{ color: 'var(--gold)' }}>MONGODB_URI</code>
+        </p>
       </div>
     </div>
   )
