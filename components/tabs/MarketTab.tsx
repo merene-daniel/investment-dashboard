@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, memo } from 'react'
+import { useState, useEffect, memo } from 'react'
 import {
   TrendingUp, TrendingDown,
   Globe, Clock,
@@ -196,6 +196,10 @@ const SENTIMENT_STYLES: Record<string, { bg: string; color: string }> = {
 
 function MarketTab() {
   const [region, setRegion] = useState<'US' | 'Europe' | 'Asia'>('US')
+  const [todayStr, setTodayStr] = useState('')
+  useEffect(() => {
+    setTodayStr(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
+  }, [])
   const maxSectorAbs = Math.max(...SECTORS.map(s => Math.abs(s.changePercent)))
 
   return (
@@ -208,7 +212,7 @@ function MarketTab() {
             Market Overview
           </h2>
           <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            {todayStr}
           </p>
         </div>
         <div

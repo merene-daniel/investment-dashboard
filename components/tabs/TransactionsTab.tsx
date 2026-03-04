@@ -37,7 +37,7 @@ const EMPTY_FORM = {
   type:        'BUY',
   symbol:      '',
   name:        '',
-  date:        new Date().toISOString().split('T')[0],
+  date:        '',
   shares:      '',
   price:       '',
   totalAmount: '',
@@ -55,6 +55,11 @@ export default function TransactionsTab({ transactions: initialTxs, portfolio }:
   const [submitting,  setSubmitting]  = useState(false)
   const [deletingId,  setDeletingId]  = useState<string | null>(null)
   const [formError,   setFormError]   = useState('')
+
+  // Set today's date after hydration to avoid SSR/client mismatch
+  useEffect(() => {
+    setForm(f => ({ ...f, date: new Date().toISOString().split('T')[0] }))
+  }, [])
 
   // BUY / SELL: auto-calculate totalAmount from shares × price + fees
   const hasSharesPrice = ['BUY', 'SELL'].includes(form.type)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
@@ -62,10 +62,11 @@ interface DashboardClientProps {
 
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>('overview')
-  // Default open on desktop, closed on mobile
-  const [sidebarOpen, setSidebarOpen] = useState(
-    () => typeof window !== 'undefined' ? window.innerWidth >= 768 : true
-  )
+  // Start closed (matches SSR); open on desktop after hydration
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  useEffect(() => {
+    setSidebarOpen(window.innerWidth >= 768)
+  }, [])
 
   const portfolio = initialData.portfolios[0]
   const isEmptyState = !portfolio

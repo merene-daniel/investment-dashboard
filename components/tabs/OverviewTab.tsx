@@ -176,7 +176,7 @@ export default function OverviewTab({ portfolio, holdings, transactions, perform
                 dataKey="date"
                 tickFormatter={(v) => {
                   const d = new Date(v)
-                  return `${d.toLocaleString('default', { month: 'short' })} ${d.getDate()}`
+                  return `${d.toLocaleString('en-US', { month: 'short' })} ${d.getDate()}`
                 }}
                 tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
                 tickLine={false}

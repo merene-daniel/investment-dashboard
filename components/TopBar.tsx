@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Bell, Search, Menu, RefreshCw } from 'lucide-react'
 import { formatCurrency, formatPercent, getPnLClass } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -30,9 +31,18 @@ const tickerData = [
 ]
 
 export default function TopBar({ portfolio, sidebarOpen, setSidebarOpen }: TopBarProps) {
-  const now = new Date()
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  const [timeStr, setTimeStr] = useState('')
+  const [dateStr, setDateStr] = useState('')
+  useEffect(() => {
+    const update = () => {
+      const now = new Date()
+      setTimeStr(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }))
+      setDateStr(now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }))
+    }
+    update()
+    const id = setInterval(update, 60_000)
+    return () => clearInterval(id)
+  }, [])
   const doubled = [...tickerData, ...tickerData]
 
   return (

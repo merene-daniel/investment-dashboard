@@ -36,7 +36,8 @@ function buildCSP(nonce: string): string {
 
 export function middleware(request: NextRequest) {
   // Cryptographically random nonce — unique per request
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+  // btoa() is used (Web API) instead of Buffer, which is not available in Edge Runtime
+  const nonce = btoa(crypto.randomUUID())
   const csp   = buildCSP(nonce)
 
   // Forward nonce to the layout (server component reads via next/headers)

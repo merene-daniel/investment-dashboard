@@ -17,6 +17,19 @@ interface AnalyticsTabProps {
 
 const PERIOD_OPTIONS = ['1W', '1M', '3M', '6M', '1Y']
 
+// Period tabs for the Monthly Returns chart
+const MONTHLY_PERIOD_OPTIONS = ['1M', '6M', '1Y', '2Y', '5Y', '10Y'] as const
+type MonthlyPeriod = typeof MONTHLY_PERIOD_OPTIONS[number]
+
+const MONTHLY_PERIOD_MONTHS: Record<MonthlyPeriod, number> = {
+  '1M':  1,
+  '6M':  6,
+  '1Y':  12,
+  '2Y':  24,
+  '5Y':  60,
+  '10Y': 120,
+}
+
 const SECTOR_COLORS: Record<string, string> = {
   Technology: '#eab308',
   Financials: '#3b82f6',
@@ -55,13 +68,51 @@ function CustomTooltip({ active, payload, label }: any) {
   return null
 }
 
+function PeriodTab({
+  options,
+  active,
+  onChange,
+}: {
+  options: readonly string[]
+  active: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <div
+      className="flex items-center gap-1 p-1 rounded-lg"
+      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
+    >
+      {options.map(p => (
+        <Button
+          key={p}
+          variant="outline"
+          size="sm"
+          onClick={() => onChange(p)}
+          className="px-3 py-1.5 h-auto text-xs font-mono font-medium transition-all"
+          style={
+            active === p
+              ? { background: 'rgba(234,179,8,0.15)', color: '#eab308', border: '1px solid rgba(234,179,8,0.25)' }
+              : { background: 'transparent', color: 'var(--text-muted)', border: '1px solid transparent' }
+          }
+        >
+          {p}
+        </Button>
+      ))}
+    </div>
+  )
+}
+
 function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
-  const [period, setPeriod] = useState('1Y')
+  const [period, setPeriod]               = useState('1Y')
+  const [monthlyPeriod, setMonthlyPeriod] = useState<MonthlyPeriod>('1Y')
 
+  // ── Performance chart data ──────────────────────────────────────────────────
   const dayCount = { '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365 }[period] || 365
-  const sliced = performance.slice(-dayCount).filter((_, i, arr) => i % Math.ceil(arr.length / 80) === 0)
+  const sliced = performance
+    .slice(-dayCount)
+    .filter((_, i, arr) => i % Math.ceil(arr.length / 80) === 0)
 
-  // Sector allocation
+  // ── Sector allocation ───────────────────────────────────────────────────────
   const sectorMap: Record<string, number> = {}
   for (const h of holdings) {
     sectorMap[h.sector] = (sectorMap[h.sector] || 0) + h.marketValue
@@ -70,40 +121,44 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
   const pieData = Object.entries(sectorMap).map(([name, value]) => ({
     name,
     value: Math.round(value * 100) / 100,
-    pct: Math.round((value / totalMV) * 1000) / 10,
+    pct:   Math.round((value / totalMV) * 1000) / 10,
     color: SECTOR_COLORS[name] || '#6b7280',
   }))
 
-  // Monthly returns (last 12 months)
+  // ── Monthly returns (keyed by selected period) ──────────────────────────────
   const monthlyData: Record<string, { gain: number; loss: number }> = {}
   for (let i = 1; i < performance.length; i++) {
-    const curr = performance[i]
-    const prev = performance[i - 1]
+    const curr  = performance[i]
+    const prev  = performance[i - 1]
     const month = curr.date.substring(0, 7)
     if (!monthlyData[month]) monthlyData[month] = { gain: 0, loss: 0 }
     const change = curr.value - prev.value
     if (change >= 0) monthlyData[month].gain += change
-    else monthlyData[month].loss += Math.abs(change)
+    else             monthlyData[month].loss += Math.abs(change)
   }
-  const monthlyChart = Object.entries(monthlyData).slice(-12).map(([month, { gain, loss }]) => ({
-    month: new Date(month + '-01').toLocaleString('default', { month: 'short', year: '2-digit' }),
-    gain: Math.round(gain),
-    loss: -Math.round(loss),
-  }))
+  const monthlySlice = MONTHLY_PERIOD_MONTHS[monthlyPeriod]
+  const monthlyChart = Object.entries(monthlyData)
+    .slice(-monthlySlice)
+    .map(([month, { gain, loss }]) => ({
+      month: new Date(month + '-01').toLocaleString('en-US', { month: 'short', year: '2-digit' }),
+      gain:  Math.round(gain),
+      loss:  -Math.round(loss),
+    }))
 
-  // Radar data for portfolio characteristics
+  // ── Radar data ──────────────────────────────────────────────────────────────
   const radarData = [
-    { subject: 'Growth', value: 72 },
-    { subject: 'Income', value: 38 },
-    { subject: 'Value', value: 45 },
-    { subject: 'Quality', value: 81 },
+    { subject: 'Growth',   value: 72 },
+    { subject: 'Income',   value: 38 },
+    { subject: 'Value',    value: 45 },
+    { subject: 'Quality',  value: 81 },
     { subject: 'Momentum', value: 68 },
-    { subject: 'Low Vol', value: 52 },
+    { subject: 'Low Vol',  value: 52 },
   ]
 
   return (
     <div className="space-y-5">
-      {/* Risk metrics */}
+
+      {/* ── Risk metrics ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
         {metrics.map((m, i) => (
           <Card key={i}>
@@ -123,41 +178,21 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
         ))}
       </div>
 
-      {/* Period selector + Performance chart */}
+      {/* ── Performance vs Benchmark ───────────────────────────────────────────── */}
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
               Performance vs Benchmark
             </h2>
-            <div
-              className="flex items-center gap-1 p-1 rounded-lg"
-              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
-            >
-              {PERIOD_OPTIONS.map(p => (
-                <Button
-                  key={p}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPeriod(p)}
-                  className="px-3 py-1.5 h-auto text-xs font-mono font-medium transition-all"
-                  style={
-                    period === p
-                      ? { background: 'rgba(234,179,8,0.15)', color: '#eab308', border: '1px solid rgba(234,179,8,0.25)' }
-                      : { background: 'transparent', color: 'var(--text-muted)', border: '1px solid transparent' }
-                  }
-                >
-                  {p}
-                </Button>
-              ))}
-            </div>
+            <PeriodTab options={PERIOD_OPTIONS} active={period} onChange={setPeriod} />
           </div>
 
           <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={sliced} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#eab308" stopOpacity={0.2} />
+                  <stop offset="5%"  stopColor="#eab308" stopOpacity={0.2} />
                   <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -168,7 +203,7 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
                   const d = new Date(v)
                   return period === '1W' || period === '1M'
                     ? `${d.getMonth() + 1}/${d.getDate()}`
-                    : new Date(v).toLocaleString('default', { month: 'short' })
+                    : new Date(v).toLocaleString('en-US', { month: 'short' })
                 }}
                 tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
                 tickLine={false} axisLine={false}
@@ -185,31 +220,8 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
         </CardContent>
       </Card>
 
-      {/* Bottom row: Monthly returns + Sector pie + Radar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Monthly returns bar chart */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-0 px-5 pt-5">
-            <CardTitle className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
-              Monthly Returns
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-5 pb-5 pt-5">
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={monthlyChart} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
-                <XAxis dataKey="month" tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={v => `$${(Math.abs(v) / 1000).toFixed(0)}k`} />
-                <Tooltip
-                  formatter={(v: any) => formatCurrency(Math.abs(v), true)}
-                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                />
-                <Bar dataKey="gain" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="loss" fill="#ef4444" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* ── Sector Allocation + Portfolio Profile ──────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Sector Pie */}
         <Card>
@@ -277,6 +289,57 @@ function AnalyticsTab({ holdings, performance, portfolio }: AnalyticsTabProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Monthly Returns — full width, bottom ──────────────────────────────── */}
+      <Card>
+        <CardHeader className="px-5 pt-5 pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Monthly Returns
+            </CardTitle>
+            <PeriodTab
+              options={MONTHLY_PERIOD_OPTIONS}
+              active={monthlyPeriod}
+              onChange={(v) => setMonthlyPeriod(v as MonthlyPeriod)}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="px-5 pb-5 pt-5">
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={monthlyChart} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(234,179,8,0.06)" />
+              <XAxis
+                dataKey="month"
+                tick={{ fill: 'var(--text-muted)', fontSize: monthlySlice > 24 ? 8 : 10 }}
+                tickLine={false}
+                axisLine={false}
+                interval={monthlySlice > 24 ? Math.ceil(monthlySlice / 24) - 1 : 0}
+              />
+              <YAxis
+                tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={v => `$${(Math.abs(v) / 1000).toFixed(0)}k`}
+                width={44}
+              />
+              <Tooltip
+                formatter={(v: any) => formatCurrency(Math.abs(v), true)}
+                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
+              />
+              <Legend
+                formatter={(value) => (
+                  <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                    {value === 'gain' ? 'Gain' : 'Loss'}
+                  </span>
+                )}
+              />
+              <Bar dataKey="gain" fill="#10b981" radius={[4, 4, 0, 0]} name="gain" />
+              <Bar dataKey="loss" fill="#ef4444" radius={[4, 4, 0, 0]} name="loss" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
     </div>
   )
 }

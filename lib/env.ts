@@ -13,7 +13,9 @@ import { z } from 'zod'
 const schema = z
   .object({
     // ── Option A: single Atlas URI ──────────────────────────────────────────
-    MONGODB_URI: z.string().url().optional(),
+    // Treat empty-string assignments (e.g. MONGODB_URI= in a copied .env.example)
+    // the same as unset — coerce '' → undefined before URL validation.
+    MONGODB_URI: z.string().optional().transform(v => v?.trim() || undefined).pipe(z.string().url().optional()),
 
     // ── Option B: individual connection parts ───────────────────────────────
     MONGODB_USER:     z.string().min(1).optional(),
