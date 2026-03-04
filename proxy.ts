@@ -1,21 +1,35 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 /**
- * Build a Content-Security-Policy string with a per-request nonce.
+ * Build a Content-Security-Policy string using hash-based allowlisting.
  *
- * Rules:
- *  - script-src: only same-origin + the nonce (no unsafe-inline, no unsafe-eval)
- *  - style-src:  same-origin + unsafe-inline (React inline styles are pervasive)
- *  - font-src:   same-origin + data: (next/font self-hosts Google Fonts at build time)
- *  - img-src:    same-origin + data: + blob: (SVG data URIs, blob object URLs)
- *  - connect-src: same-origin only (API calls, HMR websocket in dev)
- *  - frame-ancestors / frame-src: none (prevents clickjacking)
- *  - upgrade-insecure-requests: production only (HTTP→HTTPS coercion)
+ * Why hashes instead of nonces:
+ *   Nonces require the proxy to forward a per-request header (x-nonce) to
+ *   the layout server component. On Netlify, the edge→serverless hop can strip
+ *   custom request headers, causing the layout to render scripts without a
+ *   nonce attribute while the CSP still demands one → every inline script blocked.
+ *
+ *   Hashes are static and embedded directly in the CSP header — no header
+ *   forwarding needed, works on any deployment platform.
+ *
+ * Inline scripts:
+ *   - /public/theme-init.js  → external, covered by 'self' (no hash needed)
+ *   - JSON-LD <script>       → hash pinned below (content is static)
+ *
+ * To regenerate the JSON-LD hash after changing its content:
+ *   node -e "const c=require('crypto');const s=JSON.stringify({...});console.log(c.createHash('sha256').update(s).digest('base64'))"
  */
-function buildCSP(nonce: string): string {
+
+// SHA-256 of the JSON.stringify output of the Organisation JSON-LD in layout.tsx.
+// Recompute if the JSON-LD object changes.
+const JSONLD_HASH = 'sha256-NLkOSXkrAtSCcA4TZTmju+HCbyHVZoIwYd5fBvTIAAY='
+
+function buildCSP(): string {
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'`,
+    // 'self' covers external scripts in /public (theme-init.js etc.)
+    // Hash covers the static JSON-LD <script type="application/ld+json">
+    `script-src 'self' '${JSONLD_HASH}'`,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: blob:",
@@ -35,19 +49,10 @@ function buildCSP(nonce: string): string {
 }
 
 export function proxy(request: NextRequest) {
-  // Cryptographically random nonce — unique per request
-  // btoa() is used (Web API) instead of Buffer, which is not available in Edge Runtime
-  const nonce = btoa(crypto.randomUUID())
-  const csp   = buildCSP(nonce)
-
-  // Forward nonce to the layout (server component reads via next/headers)
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-nonce', nonce)
-
-  const response = NextResponse.next({ request: { headers: requestHeaders } })
+  const response = NextResponse.next()
 
   // ── Security headers ────────────────────────────────────────────────────────
-  response.headers.set('Content-Security-Policy', csp)
+  response.headers.set('Content-Security-Policy', buildCSP())
 
   // HSTS: 2 years, include subdomains, eligible for preload list
   if (process.env.NODE_ENV === 'production') {

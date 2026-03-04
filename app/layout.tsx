@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
-import { headers } from 'next/headers'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
@@ -93,14 +92,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Nonce injected by middleware — required for nonce-based CSP
-  const nonce = (await headers()).get('x-nonce') ?? ''
-
   return (
     <html
       lang="en"
@@ -108,16 +104,13 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${playfairDisplay.variable} ${dmSans.variable} ${dmMono.variable}`}
     >
+      <head>
+        {/* Anti-flash: external script covered by script-src 'self' — no nonce/hash needed */}
+        <script src="/theme-init.js" />
+      </head>
       <body className="grain bg-grid min-h-screen">
-        {/* Anti-flash: read persisted theme before React hydrates */}
+        {/* JSON-LD Organisation schema — hash pinned in CSP (proxy.ts) */}
         <script
-          nonce={nonce}
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('armor-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(_){}`,
-          }}
-        />
-        <script
-          nonce={nonce}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
