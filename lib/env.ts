@@ -80,7 +80,18 @@ function parseEnv() {
   return result.data
 }
 
-export const env = parseEnv()
+// ── Lazy singleton ──────────────────────────────────────────────────────────
+// Do NOT call parseEnv() at module load time.
+//
+// During `next build` on Netlify, modules are evaluated while env vars are NOT
+// yet available — validation would always fail. By deferring to the first
+// getMongoUri() call (which happens at request time inside a serverless fn),
+// env vars are guaranteed to be present.
+let _env: ReturnType<typeof parseEnv> | undefined
+
+function getEnv(): ReturnType<typeof parseEnv> {
+  return (_env ??= parseEnv())
+}
 
 /**
  * Ensures the username and password in a MongoDB URI are properly URL-encoded.
@@ -141,16 +152,18 @@ function sanitizeMongoUri(uri: string): string {
 
 /** Builds the MongoDB Atlas connection string. Priority: B64 > plain URI > parts. */
 export function getMongoUri(): string {
+  const e = getEnv()
+
   // Option A1 — base64-encoded URI (recommended for Netlify)
-  const fromB64 = decodeB64(env.MONGODB_URI_B64)
+  const fromB64 = decodeB64(e.MONGODB_URI_B64)
   if (fromB64) return sanitizeMongoUri(fromB64)
 
   // Option A2 — plain URI (sanitize to handle any unencoded special chars)
-  if (env.MONGODB_URI) return sanitizeMongoUri(env.MONGODB_URI)
+  if (e.MONGODB_URI) return sanitizeMongoUri(e.MONGODB_URI)
 
   // Option B — individual parts, encoded before interpolation
-  const user     = encodeURIComponent(env.MONGODB_USER!)
-  const password = encodeURIComponent(env.MONGODB_PASSWORD!)
+  const user     = encodeURIComponent(e.MONGODB_USER!)
+  const password = encodeURIComponent(e.MONGODB_PASSWORD!)
 
-  return `mongodb+srv://${user}:${password}@${env.MONGODB_CLUSTER}/${env.MONGODB_DB}?retryWrites=true&w=majority`
+  return `mongodb+srv://${user}:${password}@${e.MONGODB_CLUSTER}/${e.MONGODB_DB}?retryWrites=true&w=majority`
 }
