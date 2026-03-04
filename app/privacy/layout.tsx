@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'Armor's privacy policy — how we collect, use, and protect your personal data. GDPR and CCPA compliant. We never sell your data.',
+    "Armor's privacy policy — how we collect, use, and protect your personal data. GDPR and CCPA compliant. We never sell your data.",
   alternates: {
     canonical: '/privacy',
   },
